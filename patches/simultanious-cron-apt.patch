@@ -1,0 +1,157 @@
+From: Marc Haber
+
+Index: src/cron-apt
+===================================================================
+--- src/cron-apt	(revision 1926)
++++ src/cron-apt	(working copy)
+@@ -93,51 +93,61 @@
+     CONFIG=/etc/cron-apt/config
+ fi
+ 
++############################## lib and tmp dirs ###############################
++
++LIBDIR="/var/lib/cron-apt"
++CONFIGDIRNAME="$(echo $CONFIG | sed 's|/|_-_|g')"
++TMPDIR="/tmp/cron-apt/$$"
++
++INITLOG="$TMPDIR/initlog"
++RUNERROR="$TMPDIR/runerror"
++RUNSYSLOG="$TMPDIR/runsyslog"
++RUNLOG="$TMPDIR/runlog"
++RUNMAIL="$TMPDIR/runmail"
++ACTIONERROR="$TMPDIR/actionerror"
++ACTIONSYSLOG="$TMPDIR/actionsyslog"
++ACTIONLOG="$TMPDIR/actionlog"
++ACTIONMAIL="$TMPDIR/actionmail"
++TEMP="$TMPDIR/temp"
++MAIL="$TMPDIR/mail"
++DIFF="$TMPDIR/difftemp"
++STATUS="$TMPDIR/status"
++
++LOCKFILE="$LIBDIR/lockfile"
++MAILCHDIR="$LIBDIR/$CONFIGDIRNAME/mailchanges"
++ERROR="$TMPDIR/$CONFIGDIRNAME/error"
++
+ ############################## defaults #######################################
+-ACTIONDIR=/etc/cron-apt/action.d
+-ACTIONCONFDIR=/etc/cron-apt/config.d
+-MAILMSGDIR=/etc/cron-apt/mailmsg.d
+-MAILONMSGSDIR=/etc/cron-apt/mailonmsgs
+-SYSLOGONMSGSDIR=/etc/cron-apt/syslogonmsgs
+-ERRORMSGDIR=/etc/cron-apt/errormsg.d
+-SYSLOGMSGDIR=/etc/cron-apt/syslogmsg.d
+-LOGMSGDIR=/etc/cron-apt/logmsg.d
+-RUNERROR=/var/lib/cron-apt/runerror
+-ACTIONERROR=/var/lib/cron-apt/actionerror
+-ERROR=/var/log/cron-apt/error
+-TEMP=/var/lib/cron-apt/temp
+-RUNMAIL=/var/lib/cron-apt/runmail
+-ACTIONMAIL=/var/lib/cron-apt/actionmail
+-MAIL=/var/log/cron-apt/mail
+-RUNSYSLOG=/var/lib/cron-apt/runsyslog
+-RUNLOG=/var/lib/cron-apt/runlog
+-ACTIONSYSLOG=/var/lib/cron-apt/actionsyslog
+-ACTIONLOG=/var/lib/cron-apt/actionlog
+-INITLOG=/var/lib/cron-apt/initlog
+-LOG=/var/log/cron-apt/log
+-DIFF=/var/lib/cron-apt/difftemp
+-DIFFONCHANGES=prepend
+-MAILCHDIR=/var/lib/cron-apt/mailchanges
+-STATUS=/var/lib/cron-apt/status
+-MAILTO=root
++
++ACTIONDIR="/etc/cron-apt/action.d"
++ACTIONCONFDIR="/etc/cron-apt/config.d"
++MAILMSGDIR="/etc/cron-apt/mailmsg.d"
++MAILONMSGSDIR="/etc/cron-apt/mailonmsgs"
++SYSLOGONMSGSDIR="/etc/cron-apt/syslogonmsgs"
++ERRORMSGDIR="/etc/cron-apt/errormsg.d"
++SYSLOGMSGDIR="/etc/cron-apt/syslogmsg.d"
++LOGMSGDIR="/etc/cron-apt/logmsg.d"
++LOG="/var/log/cron-apt/log"
++DIFFONCHANGES="prepend"
++MAILTO="root"
+ # error, always, never
+-SYSLOGON=upgrade
++SYSLOGON="upgrade"
+ # error, always
+-MAILON=error
++MAILON="error"
+ # error, never
+-EXITON=error
++EXITON="error"
+ # verbose, error
+-DEBUG=verbose
++DEBUG="verbose"
+ # general options
+-OPTIONS=-q
++OPTIONS="-q"
+ # do always run as default
+-DONTRUN=
++DONTRUN=""
+ # Random sleep time before run
+-RUNSLEEP=3600
++RUNSLEEP="3600"
+ 
+-export DEBIAN_FRONTEND=noninteractive
+-export LANG=C
+-export LC_ALL=C
++export DEBIAN_FRONTEND="noninteractive"
++export LANG="C"
++export LC_ALL="C"
+ 
+ # Read configuration.
+ if [ -f "$CONFIG" ] ; then
+@@ -193,6 +203,10 @@
+ 	mail -s "$SUBJECT" "$MAILTO" < "$MAIL"
+ 	rm -f "$MAIL"
+     fi
++    TMPDIR=$(echo $TMPDIR | sed 's|^/tmp/cron-apt||')
++    if [ -e "/tmp/cron-apt/$TMPDIR" ]; then
++    	rm -rf "/tmp/cron-apt/$TMPDIR"
++    fi
+ }
+ 
+ # Do the actual msg transfer. This reduce some duplications.
+@@ -296,6 +310,12 @@
+ 
+ ############################### check #########################################
+ 
++if ! [ -d "$LIBDIR/$CONFIGDIRNAME" ]; then
++    mkdir -p "$LIBDIR/$CONFIGDIRNAME"
++fi
++if ! [ -d "$MAILCHDIR" ]; then
++    mkdir -p "$MAILCHDIR"
++fi
+ if [ -e "$ERROR" ] && [ "$DONTRUN" = "error" ] ; then
+     echo "Error in last update. Fix the problem and remove $ERROR."
+     exit
+@@ -309,6 +329,11 @@
+ 
+ ############################### sleep #########################################
+ 
++if [ -e "$TMPDIR" ]; then
++    echo "Error: $TMPDIR does already exist."
++    exit
++fi
++mkdir -p "$TMPDIR"
+ echo "CRON-APT RUN [$CONFIG]: $(date)" > $INITLOG
+ if [ -n "$RUNSLEEP" ] ; then
+     if [ $RUNSLEEP -gt 0 ] ; then
+@@ -345,7 +370,15 @@
+ 	    grep -v "^[[:space:]]*$" | {
+ 		while read LINE ; do
+ 		    echo "CRON-APT LINE: $LINE" > "$TEMP"
+-		    if ! apt-get $OPTIONS $LINE >> $TEMP 2>&1 ; then
++		    if ! dotlockfile -l -p -r 10 $LOCKFILE; then
++		    	echo > $TEMP "cannot acquire apt lock."
++			RET=1
++		    else
++			apt-get $OPTIONS $LINE >> $TEMP 2>&1
++			RET=$?
++		    fi
++		    dotlockfile -u $LOCKFILE
++		    if [ $RET -ne 0 ]; then
+ 		        # ---
+ 			# An error has occured.
+ 			createerrorinfo $ACTIONF

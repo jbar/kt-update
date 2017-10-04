@@ -1,0 +1,32 @@
+# Configuration for cron-apt.
+# The cron config is located in /etc/cron.d/cron-apt
+# This shows the defaults.
+#
+# The directory where the actions is stored.
+ACTIONDIR=test/action.d
+
+# The file that contains error messages, and current run information
+# when still running the script.
+ERROR=test/error
+
+# The loggfile.
+LOG=test/log
+
+# The email address to send mail to.
+MAILTO=ola@inguza.com
+
+# Value: error   (send mail on error runs)
+#        always  (always send mail)
+#                (else never send mail)
+# MAILON=error
+# MAILON=always
+
+# Value: error   (exit on error only)
+#                (else never exit)
+# EXITON=error
+# EXITON=error
+
+# Value: verbose (log everything)
+#        error   (log error runs only)
+#                (else log nothing)
+# DEBUG=verbose

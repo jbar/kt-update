@@ -1,0 +1,50 @@
+From: Marc Haber <mh+debian-bugs@zugschlus.de>
+
+Hi,
+
+backported cron-apt on woody has apt-get update create files in
+/var/lib/apt/lists with mode 600, breaking apt-cache for normal users.
+cron-apt should reset umask to some less restrictive value before
+invoking apt-get to work around this obvious bug in woody's apt-get
+that has been fixed in sid.
+
+Greetings
+Marc
+
+--- cron-apt.orig	Mon Dec 13 10:27:19 2004
++++ cron-apt	Mon Dec 13 10:35:23 2004
+@@ -78,7 +78,9 @@
+ #		<abo@minkirri.apana.org.au> for pointing it out.
+ 
+ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+-umask 077
++UMASK_TIGHT="077"
++UMASK_RELAXED="022"
++umask $UMASK_TIGHT
+ 
+ ############################# arguments #######################################
+ 
+@@ -386,8 +388,11 @@
+ 			    echo > $TEMP "cannot acquire apt lock."
+ 			    RET=1
+ 			else
++			    UMASK_SAVE=$(umask)
++			    umask $UMASK_RELAXED
+ 			    apt-get $OPTIONS $LINE >> $TEMP 2>&1
+ 			    RET=$?
++			    umask $UMASK_SAVE
+ 			fi
+ 			dotlockfile -u $LOCKFILE
+ 		    else
+@@ -395,8 +400,11 @@
+ 			    echo >  $TEMP "WARNING: dotlockfile not installed. If you don't want to see this"
+ 			    echo >> $TEMP "         Warning any more, set NOLOCKWARN in the configuration file."
+ 			fi
++			UMASK_SAVE=$(umask)
++			umask $UMASK_RELAXED
+ 			apt-get $OPTIONS $LINE >> $TEMP 2>&1
+ 			RET=$?
++			umask $UMASK_SAVE
+ 		    fi
+ 		    if [ $RET -ne 0 ]; then
+ 		        # ---

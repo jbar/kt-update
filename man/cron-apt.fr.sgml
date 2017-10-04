@@ -1,0 +1,114 @@
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+
+
+  <!ENTITY dhfirstname "<firstname>Ola</firstname>">
+  <!ENTITY dhsurname "<surname>Lundqvist</surname>">
+
+  <!ENTITY dhdate "<date>5 mars 2002</date>">
+
+  <!ENTITY dhsection "<manvolnum>8</manvolnum>">
+  <!ENTITY dhemail "<email>ola@inguza.com</email>">
+  <!ENTITY dhusername "Ola Lundqvist">
+  <!ENTITY dhucpackage "<refentrytitle>CRON-APT</refentrytitle>">
+  <!ENTITY dhpackage "cron-apt">
+
+  <!ENTITY debian "<productname>Debian GNU/Linux</productname>">
+  <!ENTITY gnu "<acronym>GNU</acronym>">
+]>
+
+<refentry>
+ <refentryinfo>
+  <address>&dhemail;</address>
+  <author>
+   &dhfirstname; &dhsurname;
+  </author>
+  <copyright>
+   <year>2001-2005</year>
+   <holder>&dhusername;</holder>
+  </copyright>
+  &dhdate;
+ </refentryinfo>
+ <refmeta>
+  &dhucpackage; &dhsection;
+ </refmeta>
+ <refnamediv>
+  <refname>&dhpackage;</refname>
+
+  <refpurpose>Programme d'automatisation des mises à jour du système par apt-get</refpurpose>
+ </refnamediv>
+ <refsynopsisdiv>
+  <cmdsynopsis sepchar=" ">
+    <command>&dhpackage; [fichier-de-configuration]</command>
+  </cmdsynopsis>
+ </refsynopsisdiv>
+ <refsect1>
+  <title>DESCRIPTION</title>
+  <para>
+    Cette page de manuel décrit succinctement la commande
+    <command>&dhpackage;</command>.
+  </para>
+  <para>
+    <command>&dhpackage;</command> est un programme qui utilise les
+    informations de /etc/cron-apt/action.d/ comme paramètre d'apt-get, ligne
+    par ligne, dans l'ordre du fichier.
+  </para>
+ </refsect1>
+ <refsect1>
+  <title>OPTIONS</title>
+  <para>
+    Ce programme respecte la syntaxe habituelle des lignes de commande du
+    GNU. Les options étendues commencent par deux tirets --. Un résumé des
+    options est indiqué ci-dessous. Pour une description complète, voyez les
+    fichiers <application>Info</application>.
+  </para>
+  <variablelist>
+   <varlistentry>
+    <term>
+     <option>--help</option>
+    </term>
+    <listitem>
+     <para>Affiche la liste des options.</para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+ </refsect1>
+ <refsect1>
+  <title>CONFIGURATION</title>
+  <para>
+    La configuration peut être faite en modifiant /etc/cron-apt/config et en
+    insérant des règles dans /etc/cron-apt/action.d/. Les variables qu'il
+    est possible de placer dans /etc/cron-apt/config sont documentées dans
+    l'exemple de configuration /usr/share/doc/cron-apt/examples/config.
+  </para>
+ </refsect1>
+ <refsect1>
+  <title>VOIR AUSSI</title>
+  <para>
+    apt-get (1).
+  </para>
+ </refsect1>
+ <refsect1>
+  <title>AUTEUR</title>
+  <para>
+    Cette page de manuel a été écrite par &dhusername; <&dhemail;> pour le
+    système &debian; (mais elle peut être utilisée pour d'autres
+    systèmes). Ce manuel est un logiciel libre. Vous pouvez le redistribuer
+    et/ou le modifier conformément aux termes de la Licence Publique
+    Générale GNU (GNU-GPL) telle que l'a publiée la Free Software Foundation
+    (Fondation pour le Logiciel Libre), soit selon la version 2, soit (à
+    votre convenance) selon toute autre version postérieure.
+  </para>
+ </refsect1>
+ <refsect1>
+  <title>TRADUCTION</title>
+  <para>
+   Valéry Perrin &lt;valery.perrin.debian@free.fr&gt; le 5 décembre 2004. Mise à jour le 25 février 2005.
+  </para>
+  <para>
+   L'équipe de traduction a fait le maximum pour réaliser une adaptation française de qualité. La version anglaise la plus à jour de ce document est toujours consultable via la commande  <command>man -L en auto-apt</command>
+   </para>
+   <para>
+   N'hésitez pas à signaler à l'auteur ou au traducteur, selon le cas, toute erreur dans de cette page de manuel.
+  </para>
+ </refsect1>
+</refentry>

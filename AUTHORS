@@ -1,0 +1,38 @@
+Ola Lundqvist <ola@inguza.com>
+ Main author for everything if nothing else is stated.
+
+Marc Haber <mh+debian-bugs@zugschlus.de>
+ Invented the idéa of mailon=changes and wrote the initial patch.
+ Has provided valuable ideas and testing.
+ Implemented locking with dotlockfile.
+ Added some new options.
+ A number of improvements and fixes.
+ More general locking.
+ Graceful error message if the mail command is not available.
+ Better check for /tmp directory size.
+ The idea to have variables that are applicable for only the action item.
+
+Marc Sherman <msherman@projectile.ca>
+ Implemented support for aptitude in addition to apt-get.
+
+Valery Perrin <valery.perrin.debian@free.fr>
+ Translation of the French manual page.
+
+Felix Palmen <fmp@palmen.homeip.net>
+ Documentation on how to set APT_CONFIG configuration for apt.
+
+Bob Proulx <bob@proulx.com>
+ Correction of MAILONMSGSDIR and SYSLOGONMSGSDIR.
+ Some ideas and suggestions about POSIX compliance and /dev/random.
+
+David Weinehall
+ Suggestion on POSIX compatible random generation.
+
+Sean Finney <seanius@seanius.net>
+ Patch for mailon=output option
+
+Marcel Kolaja <marcel@solnet.cz>
+ Patches for mail on upgrade function.
+
+Edward Malone <edward.malone88@gmail.com>
+ Code suggestion (more or less a patch) for mail headers support.

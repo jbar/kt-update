@@ -1,0 +1,17 @@
+From: Marc Haber <mh+debian-bugs@zugschlus.de>
+
+--- /usr/sbin/cron-apt	2005-02-27 15:47:51.000000000 +0100
++++ cron-apt	2005-04-20 09:25:04.121607832 +0200
+@@ -357,6 +357,12 @@
+     mkdir -p "$MAILCHDIR"
+ fi
+ 
++################## terminate if /etc/cron-apt/refrain exists ##################
++
++if [ -e "/etc/cron-apt/refrain" ]; then
++  exit 0
++fi
++
+ ############################### sleep #########################################
+ 
+ echo "CRON-APT RUN [$CONFIG]: $(date)" > $INITLOG

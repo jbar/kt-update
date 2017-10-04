@@ -1,0 +1,40 @@
+This package was debianized by Ola Lundqvist <opal@debian.org> on
+Tue,  5 Mar 2002 09:07:31 +0100.
+
+Upstream Author:
+	Ola Lundqvist <ola@inguza.com>
+
+Homepage:
+	http://inguza.com/software/cron-apt/
+
+Copyright:
+
+ Copyright (C) 2002-2016      Ola Lundqvist <ola@inguza.com>
+ Copyright (C) 2004,2007,2013,2016 Bob Proulx <bob@proulx.com>
+ Copyright (C) 2016           Bas Zoetekouw <bas@debian.org>
+ Copyright (C) 2016           Geoffroy Youri Berret <efrim@azylum.org>
+ Copyright (C) 2009           Edward Malone <edward.malone88@gmail.com>
+ Copyright (C) 2004-2011,2013 Marc Haber <mh+debian-bugs@zugschlus.de>
+ Copyright (C) 2006           Felix Palmen <fmp@palmen.homeip.net>
+ Copyright (C) 2004           Marc Sherman <msherman@projectile.ca>
+ Copyright (C) 2004           David Weinehall
+ Copyright (C) 2003           Sean Finney <seanius@seanius.net>
+ Copyright (C) 2002           Marcel Kolaja <marcel@solnet.cz>
+
+Licsense:
+
+ This is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free
+ Software Foundation; either version 2, or (at your option) any later
+ version.
+
+ This is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ for more details.
+
+ You should have received a copy of the GNU General Public License with
+ your Debian GNU/Linux system, in /usr/share/common-licenses/GPL, or with
+ the source package as the file COPYING.  If not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
+ MA 02110-1301, USA.

@@ -1,0 +1,26 @@
+Please consider this patch which will improve FILTERCTRLM behavior.
+
+cron-apt diff handling needs to adapt to aptitude as well, since
+aptitude update seems to create "Hit" lines out of order. I will
+investigate.
+
+Greetings
+Marc
+
+--- cron-apt.orig	2005-06-20 11:51:43.000000000 +0200
++++ /usr/sbin/cron-apt	2005-06-25 14:35:33.000000000 +0200
+@@ -430,8 +430,10 @@
+ 			umask $UMASK_SAVE
+ 		    fi
+ 		    if [ "$FILTERCTRLM" = "true" ]; then
+-			grep -v "
+-" "$TEMP" > "$FILTER"
++		        CTRLM="$(echo -e \\r)"
++		        < "$TEMP" sed "s/.*$CTRLM\(.\+\)/\1/" > "$FILTER"
++			#grep -v "
++#" "$TEMP" > "$FILTER"
+ 			cp "$FILTER" "$TEMP"
+ 		    fi
+ 		    if [ $RET -ne 0 ]; then
+
+

@@ -1,0 +1,88 @@
+--- cron-apt	2006-04-29 15:32:33.424994750 +0200
++++ /usr/sbin/cron-apt	2006-04-30 00:53:19.147721000 +0200
+@@ -20,6 +20,9 @@
+ # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ #
+ # Changes:
++#       2006-04-30 Marc Haber <mh+debian-bugs@zugschlus.de>
++#               Move dotlock code so that now the entire cron-apt run
++#               is protected by locking
+ #	2005-10-09 Marc Haber <mh+debian-bugs@zugschlus.de>
+ #		Add $APTCOMMAND to the CRON-APT line output.
+ #	2005-10-07 Ola Lundqvist <opal@debian.org>
+@@ -270,6 +273,9 @@
+     if [ -d "$TMPDIR" ] ; then
+ 	rmdir "$TMPDIR"
+     fi
++    if [ -x "/usr/bin/dotlockfile" ]; then
++        dotlockfile -u $LOCKFILE
++    fi
+ }
+ 
+ # Do the actual msg transfer. This reduce some duplications.
+@@ -401,6 +407,25 @@
+     fi
+ fi
+ 
++################## try to take out a lock, terminate if unsuccessful ##########
++
++if [ -x /usr/bin/dotlockfile ] ; then
++    if ! dotlockfile -l -p -r 10 $LOCKFILE; then
++        # create log entry
++        echo > $MAIL "cannot acquire cron-apt lock."
++	onexit
++	exit 1
++    fi
++else
++    if [ -z "$NOLOCKWARN" ]; then
++        echo >  $TEMP "WARNING: dotlockfile not installed. If you don't want to see this"
++        echo >> $TEMP "         Warning any more, set NOLOCKWARN in the configuration file."
++	createerrorinfo "startup"
++    fi
++fi
++
++################## initialize various log files ##############################
++
+ cp "$INITLOG" "$RUNMAIL"
+ cp "$INITLOG" "$RUNLOG"
+ cp "$INITLOG" "$RUNSYSLOG"
+@@ -424,34 +449,14 @@
+ 	    grep -v "^[[:space:]]*$" | {
+ 		while read LINE ; do
+ 		    echo "CRON-APT LINE: $APTCOMMAND $LINE" > "$TEMP"
+-		    if [ -x /usr/bin/dotlockfile ] ; then
+-			if ! dotlockfile -l -p -r 10 $LOCKFILE; then
+-			    echo > $TEMP "cannot acquire apt lock."
+-			    RET=1
+-			else
+-			    UMASK_SAVE=$(umask)
+-			    umask $UMASK_RELAXED
+-			    $APTCOMMAND $OPTIONS $LINE >> $TEMP 2>&1
+-			    RET=$?
+-			    umask $UMASK_SAVE
+-			fi
+-			dotlockfile -u $LOCKFILE
+-		    else
+-		    	if [ -z "$NOLOCKWARN" ]; then
+-			    echo >  $TEMP "WARNING: dotlockfile not installed. If you don't want to see this"
+-			    echo >> $TEMP "         Warning any more, set NOLOCKWARN in the configuration file."
+-			fi
+-			UMASK_SAVE=$(umask)
+-			umask $UMASK_RELAXED
+-			$APTCOMMAND $OPTIONS $LINE >> $TEMP 2>&1
+-			RET=$?
+-			umask $UMASK_SAVE
+-		    fi
++		    UMASK_SAVE=$(umask)
++		    umask $UMASK_RELAXED
++		    $APTCOMMAND $OPTIONS $LINE >> $TEMP 2>&1
++		    RET=$?
++		    umask $UMASK_SAVE
+ 		    if [ "$FILTERCTRLM" = "true" ]; then
+ 		        CTRLM="$(echo -e \\r)"
+ 		        < "$TEMP" sed "s/.*$CTRLM\(.\+\)/\1/" > "$FILTER"
+-			#grep -v "
+-#" "$TEMP" > "$FILTER"
+ 			cp "$FILTER" "$TEMP"
+ 		    fi
+ 		    if [ $RET -ne 0 ]; then

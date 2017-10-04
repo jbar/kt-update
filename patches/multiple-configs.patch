@@ -1,0 +1,50 @@
+From: Marc Haber <mh+debian-bugs@zugschlus.de>
+
+--- cron-apt.orig	2004-12-04 12:44:18.000000000 +0100
++++ cron-apt	2004-12-04 12:46:35.000000000 +0100
+@@ -83,10 +83,11 @@
+ ############################# arguments #######################################
+ 
+ STDOUT=""
++ALLCONFIGS=""
+ 
+ while [ -n "$*" ] ; do
+     if [ "$1" = "--help" ] ; then
+-	echo "USAGE: cron-apt [-i] [-s] [configfile]"
++	echo "USAGE: cron-apt [-i] [-s] [configfiles]"
+ 	exit 0
+     elif [ "$1" = "-i" ] ; then
+ 	RUNIMMEDIATELY="yes"
+@@ -97,11 +98,13 @@
+ 	shift
+     else
+ 	CONFIG="$1"
++    	ALLCONFIGS="$ALLCONFIGS $CONFIG"
+ 	shift
+     fi
+ done
+ if [ -z "$CONFIG" ] ; then
+     CONFIG=/etc/cron-apt/config
++    ALLCONFIGS="$CONFIG"
+ fi
+ 
+ ############################## lib and tmp dirs ###############################
+@@ -166,11 +169,13 @@
+ export LC_ALL="C"
+ 
+ # Read configuration.
+-if [ -f "$CONFIG" ] ; then
+-    . "$CONFIG"
+-else
+-    echo "The config file $CONFIG does not exist, using defaults."
+-fi
++for cfg in $ALLCONFIGS; do
++  if [ -f "$cfg" ] ; then
++    . "$cfg"
++  else
++    echo >&2 "The config file $cfg does not exist."
++  fi
++done
+ 
+ if [ -t 0 ]; then
+     RUNIMMEDIATELY="yes"

@@ -1,0 +1,259 @@
+#
+# Copyright (C) 2002-2011,2016 Ola Lundqvist <ola@inguza.com>
+# Copyright (C) 2016           Bas Zoetekouw <bas@debian.org>
+# Copyright (C) 2016           Geoffroy Youri Berret <efrim@azylum.org>
+# Copyright (C) 2009           Edward Malone <edward.malone88@gmail.com>
+# Copyright (C) 2007,2016      Bob Proulx <bob@proulx.com>
+# Copyright (C) 2004,2005,2007 Marc Haber <mh+debian-bugs@zugschlus.de>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301 USA.
+#
+# Changes:
+#       2011-11-05 Ola Lundqvist <ola@inguza.com>
+#               No warning message will be printed to tell that there is no
+#               mail command available when MAILON is set to 'never' or empty
+#               string.
+#       2009-05-12 Ola Lundqvist <ola@inguza.com>
+#               Add support for mail headers using suggested code from
+#               Edward Malone <edward.malone88@gmail.com>
+#       2007-08-09 Ola Lundqvist <ola@inguza.com>
+#               Avoid overflow in directory size calculation when using dash.
+#               Also remove directory if the size is too low.
+#       2007-08-02 Ola Lundqvist <ola@inguza.com>
+#		Broke out the common functions from the cron-apt command so it
+#               can be tested separately.
+#               The changes done in the project has been analyzed to give
+#               correct copyright statements in this file.
+#
+
+
+# Check the tmpdir size and exit if the space is too small.
+checktmpsize() {
+    # Sector size
+    SSIZE=$(stat --file-system --format=%S $TMPDIR)
+    # Number of free sectors
+    FSCOUNT=$(stat --file-system --format=%a $TMPDIR)
+    # Check to avoid overflow in calculations when using dash 2^(32-1-6)
+    # The number size above is got from 32768/512=2^6
+    if [ "$FSCOUNT" -lt 33554432 ] ; then
+	if [ "$(($SSIZE / 512 * $FSCOUNT / 2))" -lt "$MINTMPDIRSIZE" ]; then
+	    echo >&2 "Error: Not enough free space in $TMPDIR."
+	    rmdir --ignore-fail-on-non-empty $TMPDIR
+	    exit 1
+        fi
+    fi
+}
+
+# Send the mail to the system administrator. Will only be sent if there is
+# something to send. No arguments needed.
+onexit() {
+    if [ -f "$INITLOG" ] ; then
+	rm -f "$INITLOG"
+    fi
+    if [ -f "$TEMP" ] ; then
+	rm -f "$TEMP"
+    fi
+    if [ -f "$ACTIONLOG" ] ; then
+	rm -f "$ACTIONLOG"
+    fi
+    if [ -f "$ACTIONSYSLOG" ] ; then
+	rm -f "$ACTIONSYSLOG"
+    fi
+    if [ -f "$ACTIONMAIL" ] ; then
+	rm -f "$ACTIONMAIL"
+    fi
+    if [ -f "$ACTIONERROR" ] ; then
+	rm -f "$ACTIONERROR"
+    fi
+    if [ -f "$RUNLOG" ] ; then
+	rm -f "$RUNLOG"
+    fi
+    if [ -f "$ERROR" ] ; then
+	rm -f "$ERROR"
+    fi
+    if [ -f "$RUNSYSLOG" ] ; then
+	rm -f "$RUNSYSLOG"
+    fi
+    if [ -f "$RUNERROR" ] ; then
+	rm -f "$RUNERROR"
+    fi
+    if [ -f "$RUNMAIL" ] ; then
+	rm -f "$RUNMAIL"
+    fi
+    if [ -f "$MAIL" ] && [ "$MAILON" != "never" ] && [ -n "$MAILON" ] ; then
+	if command -v sendmail >/dev/null; then
+	    HDR="To: $MAILTO"
+	    if [ -z "$HOSTNAME" ]; then
+		HOSTNAME="$(uname -n)"
+	    fi
+	    if [ -f "$ERROR" ] ; then
+		HDR=$(printf "$HDR\nSubject: CRON-APT error on $HOSTNAME [$CONFIG]")
+	    else
+		HDR=$(printf "$HDR\nSubject: CRON-APT completed on $HOSTNAME [$CONFIG]")
+	    fi
+	    # Support for XHEADERS
+            i=1
+	    eval "VAL=\${XHEADER$i}"
+	    while [ ! -z "$VAL" ] ; do
+		HDR=$(printf "$HDR\n$VAL")
+		i=$(( $i + 1 ))
+		eval "VAL=\${XHEADER$i}"
+	    done
+	    #
+            ( printf "$HDR\n"; echo; cat $MAIL ) | sendmail -t -oi
+	else
+	    echo >&2 "cron-apt was configured to send e-mail, but no sendmail binary was found in path."
+	    echo >&2 "Either set MAILON=never in configuration or install an MTA package."
+	fi
+	rm -f "$MAIL"
+    fi
+    if [ -f "$DIFF" ] ; then
+	rm -f "$DIFF"
+    fi
+    if [ -d "$TMPDIR" ] ; then
+	rmdir "$TMPDIR"
+    fi
+    if [ -x "/usr/bin/dotlockfile" ]; then
+        dotlockfile -u $LOCKFILE
+    fi
+}
+
+# Do the actual msg transfer. This reduce some duplications.
+# 1 CATFILE
+# 2 TOFILE (if = syslog log to syslog)
+# 3 TOSTDOUT ()
+tomsg() {
+    TCAT="$1"
+    TFILE="$2"
+    TSTD="$3"
+    if [ -n "$TCAT" ] && [ -r "$TCAT" ] ; then
+	if [ -n "$TSTD" ] ; then
+	    cat "$TCAT"
+	fi
+	if [ "$TFILE" != "syslog" ] ; then
+	    cat "$TCAT" >> "$TFILE"
+	else
+	    logger -p user.notice -t cron-apt -f "$TCAT"
+	fi
+    fi
+}
+
+# Create file with RUN information. Line data should be added later.
+# Arguments:
+# 1: File to create (if = "syslog" we should log to syslog instead)
+# 2: File to cat e.g. $TEMP
+# 3: Optional file to cat (like errormsg.d/action or so)
+# 4: Optional runinformation file (will be removed)
+# 5: Optional actioninformation file (will be removed)
+# 6: If not empty data will be printed to stdout too.
+createdivinfo() {
+    FILE="$1"
+    CAT="$2"
+    OPTCAT="$3"
+    OPTRUNCAT="$4"
+    OPTACTIONCAT="$5"
+    TMPSTDOUT="$6"
+    if [ "$FILE" != "syslog" ] ; then
+	touch "$FILE"
+    fi
+    if [ -n "$OPTCAT" ] && [ -f "$OPTCAT" ] ; then
+	tomsg "$OPTCAT" "$FILE" "$TMPSTDOUT"
+    fi
+    if [ -n "$OPTRUNCAT" ] && [ -f "$OPTRUNCAT" ] ; then
+	tomsg "$OPTRUNCAT" "$FILE" "$TMPSTDOUT"
+	rm -f "$OPTRUNCAT"
+    fi
+    if [ -n "$OPTACTIONCAT" ] && [ -f "$OPTACTIONCAT" ] ; then
+	tomsg "$OPTACTIONCAT" "$FILE" "$TMPSTDOUT"
+	rm -f "$OPTACTIONCAT"
+    fi
+    tomsg "$CAT" "$FILE" "$TMPSTDOUT"
+}
+
+# ACTIONF as first argument
+createmailinfo() {
+    touch "$MAIL"
+    if [ -n "$MAILON" ] && [ -f "$MAILONMSGSDIR/$MAILON" ] ; then
+	cat "$MAILONMSGSDIR/$MAILON" >> "$MAIL"
+    fi
+    createdivinfo "$MAIL" "$TEMP" "$MAILMSGDIR/$1" "$RUNMAIL" "$ACTIONMAIL"
+}
+
+# ACTIONF as first argument
+createsysloginfo() {
+    if [ -n "$SYSLOGON" ] && [ -f "$SYSLOGONMSGSDIR/$SYSLOGON" ] ; then
+	logger -p user.notice -t cron-apt -f "$SYSLOGONMSGSDIR/$SYSLOGON" 
+    fi
+    createdivinfo "syslog" "$TEMP" "$SYSLOGMSGDIR/$1" "$RUNSYSLOG" "$ACTIONSYSLOG"
+}
+
+# ACTIONF as first argument
+createloginfo() {
+    createdivinfo "$LOG" "$TEMP" "$LOGMSGDIR/$1" "$RUNLOG" "$ACTIONLOG" "$STDOUT"
+}
+
+# ACTIONF as first argument
+createerrorinfo() {
+    createdivinfo "$ERROR" "$TEMP" "$ERRORMSGDIR/$1" "$RUNERROR" "$ACTIONERROR"
+}
+
+# run-parts emulation, stolen from Branden's /etc/X11/Xsession
+run_parts () {
+	# reset LC_COLLATE
+	unset LANG LC_COLLATE LC_ALL
+
+	if [ -z "$1" ]; then
+		echo >&2 "$0: internal run_parts called without an argument"
+	fi
+	if [ ! -d "$1" ]; then
+		echo >&2 "$0: internal run_parts called, but $1 does not exist or is not a directory."
+	fi
+	for F in $(ls $1); do
+		if expr "$F" : '[[:alnum:]_-]\+$' > /dev/null 2>&1; then
+			if [ -f "$1/$F" ] ; then
+				echo "$1/$F"
+			fi
+		fi
+	done;
+}
+
+general_varmove() {
+    PREFIX=$1
+    STORE=$2
+    SIFS=$IFS
+    LIST=$(set | grep "^[a-zA-Z][a-zA-Z0-9_]*_$PREFIX=" | sed -e "s|=.*||;")
+    for PVAR in $LIST ; do
+        # Var name
+        VVAR=$(echo $PVAR | sed -e "s|_$PREFIX$||g;")
+        if [ -n "$STORE" ] ; then
+            # Stored var name
+            eval "SVAR=${VVAR}_$STORE"
+            # Store the value
+            eval "$SVAR=\$$VVAR"
+        fi
+        # Set variable to here variable
+	eval "$VVAR=\$$PVAR"
+        eval "unset $PVAR"
+    done
+}
+
+herevariables_store() {
+    general_varmove HERE STORED
+}
+
+herevariables_restore() {
+    general_varmove STORED ""
+}

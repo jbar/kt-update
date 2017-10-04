@@ -1,0 +1,29 @@
+--- cron-apt	Wed Apr 24 00:00:00 2002
++++ cron-apt-magic	Wed Jul 31 14:32:28 2002
+@@ -114,11 +114,11 @@
+ 			# An error has occured.
+ 			createinfo $ERROR $ACTIONF
+ 			cat $TEMP >> $ERROR
+-			if [ "$MAILON" = "error" -o "$MAILON" = "always" ] ; then
++			if [ "$MAILON" = "error" -o "$MAILON" = "upgrade" -o "$MAILON" = "always" ] ; then
+ 			    createinfo $MAIL $ACTIONF
+ 			    cat $TEMP >> $MAIL
+ 			fi
+-			if [ "$DEBUG" = "error" -o "$DEBUG" = "verbose" ] ; then
++			if [ "$DEBUG" = "error" -o "$MAILON" = "upgrade" -o "$DEBUG" = "verbose" ] ; then
+ 			    createinfo $LOG $ACTIONF
+ 			    cat $TEMP >> $LOG
+ 			fi
+@@ -131,6 +131,12 @@
+ 			if [ "$MAILON" = "always" ] ; then
+ 			    createinfo $MAIL $ACTIONF
+ 			    cat $TEMP >> $MAIL
++			fi
++			if [ "$MAILON" = "upgrade" ] ; then
++				if grep -q 'The following packages will be upgraded' $TEMP ; then
++				createinfo $MAIL $ACTIONIF
++				cat $TEMP >> $MAIL
++				fi
+ 			fi
+ 			if [ "$DEBUG" = "verbose" ] ; then
+ 			    createinfo $LOG $ACTIONF

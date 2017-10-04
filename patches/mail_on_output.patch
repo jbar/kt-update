@@ -1,0 +1,14 @@
+--- cron-apt.old	Fri Mar 14 15:47:24 2003
++++ cron-apt	Fri Mar 14 15:47:47 2003
+@@ -131,6 +131,11 @@
+ 			if [ "$MAILON" = "always" ] ; then
+ 			    createinfo $MAIL $ACTIONF
+ 			    cat $TEMP >> $MAIL
++			elif [ "$MAILON" = "output" ]; then
++			    if grep -qvE '^[[:space:]]*$|CRON-APT' $TEMP; then
++			        createinfo $MAIL $ACTIONF
++			        cat $TEMP >> $MAIL
++			    fi
+ 			fi
+ 			if [ "$DEBUG" = "verbose" ] ; then
+ 			    createinfo $LOG $ACTIONF

@@ -1,0 +1,9 @@
+Random can be replaced by the following:
+
+RAND=`dd if=/dev/urandom count=1 2> /dev/null | cksum | cut -c"1-5"`
+
+As for the read -e, I cannot come with any good suggestions.  Is there a
+particular reason for using readline instead of the normal way?
+
+
+Regards: David Weinehall

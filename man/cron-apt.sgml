@@ -1,0 +1,122 @@
+<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+
+  <!ENTITY dhfirstname "<firstname>Ola</firstname>">
+  <!ENTITY dhsurname   "<surname>Lundqvist</surname>">
+  <!-- Please adjust the date whenever revising the manpage. -->
+  <!ENTITY dhdate      "<date>mars  5, 2002</date>">
+
+  <!ENTITY dhsection   "<manvolnum>8</manvolnum>">
+  <!ENTITY dhemail     "<email>ola@inguza.com</email>">
+  <!ENTITY dhusername  "Ola Lundqvist">
+  <!ENTITY dhucpackage "<refentrytitle>CRON-APT</refentrytitle>">
+  <!ENTITY dhpackage   "cron-apt">
+
+  <!ENTITY debian      "<productname>Debian GNU/Linux</productname>">
+  <!ENTITY gnu         "<acronym>GNU</acronym>">
+]>
+
+<refentry>
+ <refentryinfo>
+  <address>&dhemail;</address>
+  <author>
+   &dhfirstname; &dhsurname;
+  </author>
+  <copyright>
+   <year>2001-2005</year>
+   <holder>&dhusername;</holder>
+  </copyright>
+  &dhdate;
+ </refentryinfo>
+ <refmeta>
+   &dhucpackage; &dhsection;
+ </refmeta>
+  <refnamediv>
+    <refname>&dhpackage;</refname>
+
+    <refpurpose>program to update the system using apt-get</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>&dhpackage; [configfile]</command>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>This manual page documents briefly the
+      <command>&dhpackage;</command> command.</para>
+
+    <para>
+      <command>&dhpackage;</command> is a program that uses the
+      information in /etc/cron-apt/action.d/ as arguments to apt-get
+      line by line in file order.</para>
+
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+
+    <para>These programs follow the usual GNU command line syntax,
+      with long options starting with two dashes (`-').  A summary of
+      options is included below.  For a complete description, see the
+      <application>Info</application> files.</para>
+
+    <variablelist>
+      <varlistentry>
+        <term>
+          <option>--help</option>
+        </term>
+        <listitem>
+          <para>Show summary of options.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>CONFIGURATION</title>
+
+    <para>
+      Configuration can be done by editing /etc/cron-apt/config and by
+      adding rules to /etc/cron-apt/action.d/
+      The variables that you can set in /etc/cron-apt/config is documented
+      in the configuration example in
+      /usr/share/doc/cron-apt/examples/config
+    </para>
+    <para>
+      From version 0.5.0 the optional FILTERCTRLM attribute is deprecated.
+    </para>
+      
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+
+    <para>apt-get (1)</para>
+    <para>aptitude (1)</para>
+  </refsect1>
+  <refsect1>
+    <title>AUTHOR</title>
+
+    <para>This manual page was written by &dhusername; &dhemail; for
+      the &debian; system (but may be used by others).
+      This manual is free software; you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation; either version 2 of the License, or
+      (at your option) any later version.</para>
+  </refsect1>
+</refentry>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:t
+sgml-shorttag:t
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-default-dtd-file:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

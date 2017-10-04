@@ -1,0 +1,764 @@
+cron-apt (0.10.0) unstable; urgency=medium
+
+  * Applied a patch from Bas Zoetekouw that allow email to be sent
+    using the MTA directly without the need of mailx. This solves an issue
+    with XHEADERS cause failure in mailx. Closes: #846060.
+  * Bob Proulx <bob@proulx.com> suggested that -oi option shall be added
+    to the sendmail command.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon, 28 Nov 2016 22:28:04 +0100
+
+cron-apt (0.9.6) unstable; urgency=medium
+
+  * Correction to make it work with space in XHEADERS. Closes: #813609.
+    Thanks to Geoffroy Youri Berret <efrim@azylum.org> for the solution
+    suggestion and testing.
+  * Documented that there is a cron script in APT itself. Closes: #512880.
+  * Updated to standards version 3.9.6.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue, 14 Jun 2016 22:50:30 +0200
+
+cron-apt (0.9.5) unstable; urgency=low
+
+  * Documented the fact that anacron do not run anything while on
+    battery by default and gave a reference to how to change that.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun, 17 Jan 2016 21:13:28 +0100
+
+cron-apt (0.9.4) unstable; urgency=medium
+
+  * Close: #809128. Improve clean target in man/Makefile.
+
+ -- Ola Lundqvist <opal@debian.org>  Fri, 08 Jan 2016 11:47:15 +0100
+
+cron-apt (0.9.3) unstable; urgency=low
+
+  * Added cron-daemon virtual package as an alternative cron
+    recommendation. Closes: #769729.
+  * Updated standards version.
+  * Simplified rules file. Can use standard debhelper 7 rules file.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun, 16 Nov 2014 16:35:36 +0100
+
+cron-apt (0.9.2) unstable; urgency=low
+
+  * The code to generate random data is changed so that it handles
+    absence of /dev/urandom and more importantly handles the case when
+    cksum return a too short string. Closes: #689914. Thanks to Marc
+    Haber <mh+debian-bugs@zugschlus.de> and Bob Proulx <bob@proulx.com>
+    for the suggestions.
+
+ -- Ola Lundqvist <opal@debian.org>  Fri, 24 May 2013 22:49:33 +0200
+
+cron-apt (0.9.1) unstable; urgency=low
+
+  * Added path to README file reference. Closes: #658881.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon, 19 Mar 2012 21:33:47 +0100
+
+cron-apt (0.9.0) unstable; urgency=low
+
+  * Improved documentation for actions, logging and action specific
+    configuration. Closes: #434991, #253419.
+  * Added information about --no-list-cleanup option. Closes: #449391.
+  * Documented apt-get command recommendation more clearly.
+  * The configuration file is now documented in the README file instead of
+    the configuration file itself.
+  * No warning message will be printed to tell that there is no mail command
+    available in case MAILON is set to 'never' or empty string. Closes: #569180.
+
+ -- Ola Lundqvist <opal@debian.org>  Sat, 05 Nov 2011 00:50:19 +0100
+
+cron-apt (0.8.5) unstable; urgency=low
+
+  * Updated to standards version 3.9.1 and made it debhelper 8
+    compatible.
+  * The contents of OPTIONS configuration is now included in debug
+    output. Closes: #476751. Thanks to Marc Haber <mh+debian-bugs@zugschlus.de>
+    for the patch.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 03 Nov 2011 07:35:53 +0100
+
+cron-apt (0.8.4) unstable; urgency=low
+
+  * Corrected spelling error in the man page. Closes: #631571. Thanks to
+    A. Costa for spotting this fault.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon, 27 Jun 2011 04:21:20 +0200
+
+cron-apt (0.8.3) unstable; urgency=low
+
+  * Corrected a problem that very long cron-apt options cause an error
+    message and output being generated always. Closes: #619149.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon, 21 Mar 2011 21:21:37 +0100
+
+cron-apt (0.8.2) unstable; urgency=medium
+
+  * Bandwidth limit must not be enabled by default. Closes: #593859.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun, 22 Aug 2010 10:46:00 +0200
+
+cron-apt (0.8.1) unstable; urgency=low
+
+  * Added bandwidth limit example to the configuration file. Thanks to
+    Andreas Mohr <andi@lisas.de> for pointing out this possibility.
+
+ -- Ola Lundqvist <opal@debian.org>  Sat, 21 Nov 2009 15:07:52 +0100
+
+cron-apt (0.8.0) unstable; urgency=low
+
+  * Documented the UMASK_APT configuration setting. Changed name from
+    the original UMASK_RELAXED in order to describe the function better.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 27 Aug 2009 22:51:17 +0200
+
+cron-apt (0.7.1) unstable; urgency=low
+
+  * Updated documentation to describe how to configure security updates
+    only. Closes: #449386.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon, 10 Aug 2009 07:42:37 +0200
+
+cron-apt (0.7.0) unstable; urgency=low
+
+  * Added support for mail headers using code suggestions from Edward
+    Malone <edward.malone88@gmail.com>.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue, 12 May 2009 06:49:28 +0200
+
+cron-apt (0.6.8) unstable; urgency=low
+
+  * Corrected problem that cause it to send an email instead of
+    syslogging. Thanks to Boris Trautmann for spotting this.
+  * Updated to standards version 3.8.0.
+  * Changed so that clean target is no longer ignored.
+  * Moved debhelper compatibility version from rules file to compat file.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue, 24 Mar 2009 20:54:10 +0100
+
+cron-apt (0.6.7) unstable; urgency=low
+
+  * Drop dependency on debianutils as it is an essential package since
+    several major releases of Debian. Closes: #488145. Thanks to Justin
+    B Rye <jbr@edlug.org.uk> for the patch.
+  * Fixed spelling errors, closes: #489714. Thanks to Jeremiah C. Foster
+    <jeremiah@jeremiahfoster.com> for ponting them out.
+
+ -- Ola Lundqvist <opal@debian.org>  Fri, 11 Jul 2008 23:44:08 +0200
+
+cron-apt (0.6.6) unstable; urgency=low
+
+  * Updated upstream email and webpage address from opalsys.net to
+    inguza.com.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon,  7 Apr 2008 17:48:57 +0200
+
+cron-apt (0.6.5) unstable; urgency=low
+
+  * Correctly handle logrotate script and install it, closes: #467616.
+    Thanks to Justin B Rye <jbr@edlug.org.uk> for pointing me to this
+    obvious fix.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun,  9 Mar 2008 23:29:25 +0100
+
+cron-apt (0.6.4) unstable; urgency=low
+
+  * Removed some comments about aptitude bug that is now fixed in
+    stable, closes: #445346.
+  * Changed location of upstream page.
+
+ -- Ola Lundqvist <opal@debian.org>  Sat,  6 Oct 2007 10:53:11 +0200
+
+cron-apt (0.6.3) unstable; urgency=low
+
+  * Revert the change done in the earlier version.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun, 16 Sep 2007 20:05:08 +0200
+
+cron-apt (0.6.2) unstable; urgency=low
+
+  * Correction so that HERE variables realyl work as they should,
+    closes: #442409. Thanks to Mario Holbe <Mario.Holbe@TU-Ilmenau.DE>
+    for pointing out this problem.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun, 16 Sep 2007 19:50:13 +0200
+
+cron-apt (0.6.1) unstable; urgency=low
+
+  * Avoid overflowin directory size calculation when using dash,
+    closes: #436728.
+  * Also remove directory when the disk size is too small,
+    closes: #436685.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu,  9 Aug 2007 06:44:42 +0200
+
+cron-apt (0.6.0) unstable; urgency=low
+
+  * Support for HERE variables in the action.d configuration files,
+    closes: #435459. The ideas are from Marc Haber.
+  * Moved out functions from cron-apt command so they can be tested
+    separately.
+  * First basic tests added.
+  * Correction of revision history and also added some more people to
+    the AUTHORS file and to the copyright statements.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu,  2 Aug 2007 17:33:27 +0200
+
+cron-apt (0.5.0) unstable; urgency=low
+
+  * Based on a patch from Marc Haber <mh+debian-bugs@zugschlus.de> cron-
+    apt now fail more gracefully if the mail command is not available.
+    Closes: #369666.
+  * Applied patch from Marc Haber <mh+debian-bugs@zugschlus.de> to make
+    a more graceful check if the tmp directory is full. Modified the
+    patch so it is configurable. Closes: #373099.
+  * Make the FILTERCTRLM depricated as aptitude now support quiet
+    option. This makes the old conflict with TARGET=upgrade a non-conflict,
+    closes: #296789.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue, 31 Jul 2007 19:38:18 +0200
+
+cron-apt (0.4.16) unstable; urgency=low
+
+  * Correction from Bob Proulx <bob@proulx.com> incorporated to correct
+    the MAILONMSGSDIR and SYSLOGONMSGSDIR spelling problem that exists,
+    closes: #434006.
+
+ -- Ola Lundqvist <opal@debian.org>  Sat, 21 Jul 2007 21:50:26 +0200
+
+cron-apt (0.4.15) unstable; urgency=low
+
+  * Check refrain file even after sleep, closes: #431949.
+    Suggestion done by Marc Haber <mh+debian-bugs@zugschlus.de>.
+
+ -- Ola Lundqvist <opal@debian.org>  Fri,  6 Jul 2007 12:59:59 +0200
+
+cron-apt (0.4.14) unstable; urgency=low
+
+  * Add dependency on cron, closes: #409555.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun,  4 Feb 2007 12:04:18 +0100
+
+cron-apt (0.4.13) unstable; urgency=low
+
+  * Applied patch from Felix Palmen <fmp@palmen.homeip.net> to document
+    how to set APT_CONFIG configuration for apt. Closes: #402748.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 14 Dec 2006 21:15:26 +0100
+
+cron-apt (0.4.12) unstable; urgency=low
+
+  * Escaped one character in the configuration file as suggested by
+    Reuben Thomas <rrt@sc3d.org>, closes: #402277.
+
+ -- Ola Lundqvist <opal@debian.org>  Sat,  9 Dec 2006 11:24:35 +0100
+
+cron-apt (0.4.11) unstable; urgency=low
+
+  * Corrected stupid syntax error, closes: #400465.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun, 26 Nov 2006 17:15:09 +0100
+
+cron-apt (0.4.10) unstable; urgency=low
+
+  * Make sure that initlog is removed on exit, closes: #399827.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 23 Nov 2006 06:28:28 +0100
+
+cron-apt (0.4.9) unstable; urgency=low
+
+  * Correction of spelling error in config file, closes: #399189.
+
+ -- Ola Lundqvist <opal@debian.org>  Sat, 18 Nov 2006 16:41:48 +0100
+
+cron-apt (0.4.8) unstable; urgency=low
+
+  * Updated FSF address and updated to latest GPL version.
+  * Applied patch from Alex Owen <r.a.owen@qmul.ac.uk> to correct an
+    inconsistency in the configuration file related to DIFFONCHANGES.
+    Closes: #377681.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon, 17 Jul 2006 19:13:07 +0200
+
+cron-apt (0.4.7) unstable; urgency=low
+
+  * Corrected so that debhelper is now build depends instead of build
+    depends indep.
+  * Updated to standards version 3.7.2.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu,  6 Jul 2006 00:21:00 +0200
+
+cron-apt (0.4.6) unstable; urgency=low
+
+  * Move dotlock code so that now the entire cron-apt run is protected
+    by locking, closes: #358136.
+    Thanks to Marc Haber <mh+debian-bugs@zugschlus.de> for the patch.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun, 30 Apr 2006 18:09:02 +0200
+
+cron-apt (0.4.5) unstable; urgency=low
+
+  * Removing bash dependency that is no longer needed, closes: #356566.
+  * Moved mailx dependency to recommends.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun, 12 Mar 2006 20:59:46 +0100
+
+cron-apt (0.4.4) unstable; urgency=low
+
+  * Fixed minor error in documentation in config file, closes: #355397.
+  * Upgraded to debhelper 4 compatibility.
+  * Updated to standards version 3.6.2.
+  * Corrected FSF address in copyright file.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun,  5 Mar 2006 20:08:05 +0100
+
+cron-apt (0.4.3) unstable; urgency=low
+
+  * The DIFFIGNORE option is now possible to set per config.d file,
+    closes: #344098.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue, 20 Dec 2005 20:10:37 +0100
+
+cron-apt (0.4.2) unstable; urgency=low
+
+  * Improved documentation for aptitude problem with untrusted sources,
+    closes: #316606.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun,  9 Oct 2005 21:45:38 +0200
+
+cron-apt (0.4.1) unstable; urgency=low
+
+  * Changed config documentation to describe how to accept untrusted
+    sources, closes: #316606.
+  * Applied patch from Marc Haber <mh+debian-bugs@zugschlus.de> to
+    add $APTCOMMAND to the CRON-APT line output, closes: #332817.
+  * Changed DIFFIGNORE for aptitude in configuration, closes: #332816.
+    Thanks to Marc Haber <mh+debian-bugs@zugschlus.de> for this
+    information.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun,  9 Oct 2005 12:30:15 +0200
+
+cron-apt (0.4.0) unstable; urgency=low
+
+  * Last config file fix was even more ambigous as before. Now it is
+    reverted but easier to understand.
+  * Applied patch from Marc Haber <mh+debian-bugs@zugschlus.de> to make
+    it possible to ignore specific lines in when using the
+    mailon=changes directive, closes: #331195.
+    This patch also introduce better hostname handling, closes: #331197.
+  * Changed the option name that the Marc Haber patch introduced.
+  * Documented that additional configuration is needed for
+    noninteractive upgrades of non-authenticated packages with aptitude,
+    closes: #316606.
+
+ -- Ola Lundqvist <opal@debian.org>  Fri,  7 Oct 2005 21:49:49 +0200
+
+cron-apt (0.3.1) unstable; urgency=low
+
+  * Applied patch from Marc Haber <mh+debian-bugs@zugschlus.de> to fix
+    issue with CTRLM, closes: #315731.
+  * Corrected typo in configuration file, closes: #306453.
+  * Mention anacron in README, closes: #309540.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun,  2 Oct 2005 00:19:01 +0200
+
+cron-apt (0.3.0) unstable; urgency=low
+
+  * Applied patch from Marc Haber <mh+debian-bugs@zugschlus.de> that
+    make it possible to create a file that make cron-apt silently exit.
+    Useful for dial-up connections, closes: #305474.
+  * Updated manpage with minor correction, closes: #298983.
+
+ -- Ola Lundqvist <opal@debian.org>  Wed, 20 Apr 2005 22:00:31 +0200
+
+cron-apt (0.2.3) unstable; urgency=low
+
+  * Updated french manpage with translation of GPL statement. Thanks to
+    Valery Perrin.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun, 27 Feb 2005 15:46:04 +0100
+
+cron-apt (0.2.2) unstable; urgency=low
+
+  * Change license for manpage and french translation. I'm the copyright
+    holder for the english version and I have got permission from Valery
+    Perrin to change the french version as well.
+    Closes: #296234.
+  * Do not use filterctrlm as default.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 24 Feb 2005 19:57:28 +0100
+
+cron-apt (0.2.1) unstable; urgency=low
+
+  * Fixed bashism in filtercrlf check, closes: #294321.
+
+ -- Ola Lundqvist <opal@debian.org>  Wed,  9 Feb 2005 17:40:53 +0100
+
+cron-apt (0.2.0) unstable; urgency=low
+
+  * Applied patch from Marc Sherman <msherman@projectile.ca> to support
+    aptitude in addition to apt-get, closes: #287126. This allow support
+    for apt-file as well, closes: #282117.
+  * Fixed the location of the French manpage translation, closes: #292899.
+  * Changed to a more flexible makefile structure.
+  * Updated README to fit the new feature.
+  * Updated description in control file.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun,  6 Feb 2005 12:15:15 +0100
+
+cron-apt (0.1.2) unstable; urgency=low
+
+  * Updated README file to note that they will be sourced and POSIX
+    syntax is allowed as well as just setting variables, closes:
+    #280868.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue,  1 Feb 2005 20:55:37 +0100
+
+cron-apt (0.1.1) unstable; urgency=low
+
+  * Added French manpage translation from  Valery Perrin
+    <valery.perrin.debian@free.fr>, closes: #285474.
+  * Added patch from Marc Haber <mh+debian-bugs@zugschlus.de> that
+    fix an umask problem on woody, closes: #283631.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon, 13 Dec 2004 18:31:00 +0100
+
+cron-apt (0.1.0) unstable; urgency=low
+
+  * Applied patch from Marc Haber <mh+debian-bugs@zugschlus.de> that
+    allow for multiple configuration files to be specified from command
+    line. Closes: #284571.
+  * This is the first version to use the major.minor.correction version
+    numbering structure.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun, 12 Dec 2004 00:12:36 +0100
+
+cron-apt (0.0.37) unstable; urgency=low
+
+  * Removed superflous autoclean line from default config, closes:
+    #276704.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 21 Oct 2004 20:22:58 +0200
+
+cron-apt (0.0.36) unstable; urgency=medium
+
+  * Escaped string so that if action.d file data contain a slash it is
+    escaped, closes: #272941.
+  * Documented how to set an alternative sources.list file.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 23 Sep 2004 07:48:10 +0200
+
+cron-apt (0.0.35) unstable; urgency=low
+
+  * Add warning if dotlockfile not found, closes: #272412.
+    Thanks to Marc Haber <mh+debian-packages@zugschlus.de> for the patch.
+  * Modified copyright file so that it cover 2001-2004 and not just 2001.
+  * Added note about documentation and development information in the
+    README file, closes: #272410.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon, 20 Sep 2004 21:23:05 +0200
+
+cron-apt (0.0.34) unstable; urgency=low
+
+  * Made locking optional but recommended. Also added recommends on
+    liblockfile1 to reflect this. Closes: #271722.
+
+ -- Ola Lundqvist <opal@debian.org>  Wed, 15 Sep 2004 13:31:53 +0200
+
+cron-apt (0.0.33) unstable; urgency=low
+
+  * Applied patch from Marc Haber that allow for simultanious cron-apt
+    run without messing up the logging, closes: #271201.
+  * Modified this patch to avoid symlink attacks and also some minor
+    bugfixes (in other parts of the code).
+  * Added dependency to debianutils >= 1.7 because of the modifications to
+    avoid symlink attacks. Thanks to Marc Haber for pointing out mktemp as
+    a solution to the symlink problem.
+  * Fix bug in run-parts, closes: #271191. Thanks to Marc Haber
+    <mh+debian-bugs@zugschlus.de> for this cosmetic change.
+
+ -- Ola Lundqvist <opal@debian.org>  Sat, 11 Sep 2004 22:26:42 +0200
+
+cron-apt (0.0.32) unstable; urgency=low
+
+  * Applied patch from Marc Haber <mh+debian-bugs@zugschlus.de> to achieve
+    run-parts behaviour, closes: #270121.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue,  7 Sep 2004 14:34:20 +0200
+
+cron-apt (0.0.31) unstable; urgency=high
+
+  * Added -qq option to update action, closes: #267104.
+    This is needed in order to make *on=changes output decent information.
+  * Added configuration file to email subject, closes: #267097.
+  * Urgency=high to ensure that these features are available at release time.
+  * Added GNU copyright statement to README and cron-apt source.
+  * Also added AUTHORS information.
+  * Moved information from README.Debian to README file.
+
+ -- Ola Lundqvist <opal@debian.org>  Fri, 20 Aug 2004 23:01:23 +0200
+
+cron-apt (0.0.30) unstable; urgency=low
+
+  * Changes in *on=changes run structure, closes: #264340.
+  * Verified that it do not close and exit without notice, closes: #265436.
+    This was probably fixed in 0.0.28.
+
+ -- Ola Lundqvist <opal@debian.org>  Fri, 13 Aug 2004 11:13:01 +0200
+
+cron-apt (0.0.29) unstable; urgency=low
+
+  * Fixed diffbug on first run.
+
+ -- Ola Lundqvist <opal@debian.org>  Fri, 13 Aug 2004 09:31:34 +0200
+
+cron-apt (0.0.28) unstable; urgency=low
+
+  * Optional files are checked for now, closes: #265367.
+  * Made *ON=changes available to more than only mail (eg. syslog and debug).
+    This also fixed that mailon=changes do not show action lines, closes: #265368.
+  * Config file is shown in run line, closes: #265369.
+  * Added syslogonmsgs in addition to the mailonmsgs.
+  * Set logrotate to 4 instead of 52. It is now just debug information.
+
+ -- Ola Lundqvist <opal@debian.org>  Fri, 13 Aug 2004 07:25:07 +0200
+
+cron-apt (0.0.27) unstable; urgency=low
+
+  * Fixed error in mailit, closes: #264336.
+  * Better checking on status file, closes: #265283.
+  * Rechecked that files are quoted, closes: #264338.
+  * Added -n check on createdivinfo, closes: #264337.
+  * Applied mailon=changes patch from
+    Marc Haber <mh+debian-bugs@zugschlus.de>. Closes: #264340.
+    This is a nice new feature. Modified it some to suite this better.
+  * Extended the mailmsgsdir feature to fit all mailon directives.
+  * Fixed some more error that I have made during this work.
+  * Added support for SYSLOGON too.
+  * Changed defaults so it syslog on upgrade and mail on error.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 12 Aug 2004 20:18:42 +0200
+
+cron-apt (0.0.26) unstable; urgency=low
+
+  * Made sure that all variables are properly quoted, closes: #265056.
+
+ -- Ola Lundqvist <opal@debian.org>  Wed, 11 Aug 2004 20:30:33 +0200
+
+cron-apt (0.0.25) unstable; urgency=low
+
+  * Cleaned up some code and fixed a minor logging bug.
+  * Better argument checking code. Can now handle more than
+    one option.
+  * Changed from status passing from echo to file.
+  * Fixed so that stdout argument really works.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun,  8 Aug 2004 14:28:03 +0200
+
+cron-apt (0.0.24) unstable; urgency=low
+
+  * Fixed variable bug, closes: #264168.
+  * Fixed so that dpkg-dist and dpkg-old files is not run, closes: #264167.
+  * Removed a lot of duplicated code and made functions for it.
+  * Rewrote the logging and mail functions.
+    Closes: #264181, #264184, #264171, #264170.
+  * Added debug option, closes: #264165.
+
+ -- Ola Lundqvist <opal@debian.org>  Sat,  7 Aug 2004 15:49:17 +0200
+
+cron-apt (0.0.23) unstable; urgency=low
+
+  * Changed from upgrade to dist-upgrade as default download action.
+    Thanks to Andrew McCarthy <andrewmc-debian@celt.dias.ie> for the
+    suggestion. Also added an autoclean before if there is limited
+    diskspace.
+
+ -- Ola Lundqvist <opal@debian.org>  Wed, 28 Jul 2004 13:08:26 +0200
+
+cron-apt (0.0.22) unstable; urgency=low
+
+  * Changed from read -e to read as David Weinehall <tao@debian.org>
+    suggested.
+  * Updated standards version to 3.6.1.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon, 26 Jul 2004 20:48:23 +0200
+
+cron-apt (0.0.21) unstable; urgency=low
+
+  * Cron-apt is now more POSIX compliant.
+    Thanks to David Weinehall <tao@debian.org> Bob Proulx <bob@proulx.com>
+    for the suggestions and patch. Also thanks to Bob Proulx <bob@proulx.com>
+    for comments. Closes: #260071.
+  * Added some documentation to the sample config so that errormsg.d and
+    such directories are better documented, closes: #228477.
+  * Moved manpage section from 1 to 8.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 22 Jul 2004 17:37:38 +0200
+
+cron-apt (0.0.20) unstable; urgency=low
+
+  * Added dependency on mailx, closes: #222769.
+  * Fix so it always work if LANG not set to C, closes: #226245.
+  * Fixed cron.d example, closes: #219237.
+  * Fixed so runemediatly is set if a terminal exist for stdout,
+    closes: #208145. Thanks to Bob Proulx <bob@proulx.com> for
+    the fix.
+  * Fixed inconsistent set in config, closes: #208148.
+    Thanks to Bob Proulx <bob@proulx.com> for the patch.
+  * Fixed typo in cronfile, closes: #208116. Thanks to
+    Martin Pool <mbp@sourcefrog.net> for pointing it out.
+  * Cosmetic changes to sgml file, closes: #208149.
+
+ -- Ola Lundqvist <opal@debian.org>  Fri, 16 Apr 2004 12:02:13 +0200
+
+cron-apt (0.0.19) unstable; urgency=low
+
+  * Updated manpage with minor fixes.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon,  1 Sep 2003 06:33:53 +0200
+
+cron-apt (0.0.18) unstable; urgency=low
+
+  * Always run even if there was an error last time is not the default,
+    closes: #203277.
+  * Fix so that you can write RUNSLEEP=0 too, closes: #204430.
+  * Updated standards version from 3.5.8 to 3.5.10.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 28 Aug 2003 12:04:39 +0200
+
+cron-apt (0.0.17) unstable; urgency=low
+
+  * Added patch from Marcel Kolaja that adds an option -i to run
+    immediately from command line. This patch was modified slightly so
+    that it fits better in how I write code.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue, 22 Jul 2003 14:09:14 +0200
+
+cron-apt (0.0.16) unstable; urgency=low
+
+  * Added randomize feature to spread the webb access times. Now cron-
+    apt will sleep up to one hour (default) before making any apt
+    actions, closes: #191981.
+  * Now cron-apt is aware of the DEBIANFRONTEND=noninteractive
+    environement to make it able to update noninteractively, 
+    closes: #190151, #190899.
+  * Added patch to support mailon=output from
+    Sean Finney <seanius@seanius.net>, closes: #173927.
+  * Added support for per (log,error,mail) messages, closes: #184804.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 10 Jul 2003 16:09:36 +0200
+
+cron-apt (0.0.15) unstable; urgency=low
+
+  * Added note in the README.Debian file that you need to disable the
+    other cron.d.
+
+ -- Ola Lundqvist <opal@debian.org>  Sat, 28 Jun 2003 16:51:31 +0200
+
+cron-apt (0.0.14) unstable; urgency=low
+
+  * Added mailon=output option using patch from Sean Finney
+    <seanius@seanius.net>, closes: #185026.
+
+ -- Ola Lundqvist <opal@debian.org>  Thu, 17 Apr 2003 22:51:56 +0200
+
+cron-apt (0.0.13) unstable; urgency=low
+
+  * Updated standards version from 3.5.2 to 3.5.8 (no other changes).
+  * Removed debian/cron-apt.conffiles. This file is properly generated
+    anyway. Now it creates duplicates instead.
+  * Fixed minor typo, closes: #177567.
+  * Fixed documentation reference in README.Debian, closes: #170295.
+
+ -- Ola Lundqvist <opal@debian.org>  Fri, 10 Jan 2003 17:45:05 +0100
+
+cron-apt (0.0.12) unstable; urgency=low
+
+  * Fixed manpage error.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon, 11 Nov 2002 07:19:13 +0100
+
+cron-apt (0.0.11) unstable; urgency=low
+
+  * Minor spelling thing fixed, closes: #161493.
+  * Added new option to avoid unnecessary manual intervention, closes:
+    #166966.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue,  5 Nov 2002 16:04:24 +0100
+
+cron-apt (0.0.10) unstable; urgency=low
+
+  * Documented the new MAILON=upgrade feature in the configuration
+    file, closes: #159289.
+  * Restructurated the Makefile.
+  * Added more files to the examples directory.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon,  2 Sep 2002 14:59:02 +0200
+
+cron-apt (0.0.9) unstable; urgency=low
+
+  * Implemented mail on upgrade only using patches from Marcel Kolaja
+    <marcel@solnet.cz>. Thanks a lot for these patches.
+
+ -- Ola Lundqvist <opal@debian.org>  Wed, 14 Aug 2002 15:06:00 +0200
+
+cron-apt (0.0.8) unstable; urgency=low
+
+  * Fixed "ln" typo in README file, closes: #150061.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue, 13 Aug 2002 11:11:26 +0200
+
+cron-apt (0.0.7) unstable; urgency=low
+
+  * Added default path so the upgrade will work fine. Thanks to Donovan
+    Baarda <abo@minkirri.apana.org.au> for pointing out the problem.
+    Closes: #144158.
+
+ -- Ola Lundqvist <opal@debian.org>  Wed, 24 Apr 2002 22:14:48 +0200
+
+cron-apt (0.0.6) unstable; urgency=low
+
+  * Fixed help problem, thanks to Mari Wang for the simple patch,
+    closes: #141680.
+
+ -- Ola Lundqvist <opal@debian.org>  Mon,  8 Apr 2002 20:08:32 +0200
+
+cron-apt (0.0.5) unstable; urgency=low
+
+  * Added download action, closes: #141046.
+  * Fixed description, closes: #140594.
+  * Rewrote the mail and log handling so it will be more flexible.
+  * Added skipping of backup files (*~).
+  * Added skipping of comment lines in action files.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun,  7 Apr 2002 16:51:12 +0200
+
+cron-apt (0.0.4) unstable; urgency=low
+
+  * Fixed run order, closes: #138295.
+  * Updated documentation, closes: #138291.
+
+ -- Ola Lundqvist <opal@debian.org>  Sun, 17 Mar 2002 23:38:15 +0100
+
+cron-apt (0.0.3) unstable; urgency=low
+
+  * Now arch all, closes: #137848.
+  * Can not fix the bashism, now depends on bash instead, closes:
+    #137891.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue, 12 Mar 2002 22:05:53 +0100
+
+cron-apt (0.0.2) unstable; urgency=low
+
+  * Fixed problem with logrotate.
+  * Fixed problem with cronjob, typo.
+
+ -- Ola Lundqvist <opal@debian.org>  Wed,  6 Mar 2002 09:56:02 +0100
+
+cron-apt (0.0.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue,  5 Mar 2002 09:07:31 +0100
+

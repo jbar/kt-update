@@ -1,0 +1,88 @@
+From: Marc Haber <mh+debian-bugs@zugschlus.de>
+To: Debian Bug Tracking System <submit@bugs.debian.org>
+Subject: how about a MAILON="changes" option?
+Bcc: Marc Haber <mh+debian-bugs@zugschlus.de>
+X-Mailer: reportbug 2.64
+Date: Sun, 08 Aug 2004 12:47:58 +0200
+Message-ID: <E1BtlDa-0007Yd-FR@torres.ka0.zugschlus.de>
+Delivered-To: submit@bugs.debian.org
+X-Spam-Checker-Version: SpamAssassin 2.60-bugs.debian.org_2004_03_25 
+	(1.212-2003-09-23-exp) on spohr.debian.org
+X-Spam-Status: No, hits=-8.0 required=4.0 tests=BAYES_00,HAS_PACKAGE 
+	autolearn=no version=2.60-bugs.debian.org_2004_03_25
+X-Spam-Level: 
+
+[Message part 1 (text/plain, inline)]
+
+Package: cron-apt
+Version: 0.0.24
+Severity: wishlist
+Tags: patch
+
+Please consider the attached patch that introduces a MAILON="changes"
+option which will send an e-mail if apt-get's output has actually
+changed. This allows cron-apt to be invoked often without swamping the
+admin with e-mails in the case that new packages are not automatically
+installed.
+
+The patch also includes hot fixes to some of the newly found bugs I
+have recently reported, so you probably can't take it verbatim. The
+output routine is probably wrong since I have not yet understood all
+of your recent changes. I am submitting the patch for your early review.
+
+It needs the options of action.d/0-update to be set to -qq instead of
+-q until #264175 has been sorted out. I have
+/etc/cron-apt/mailmsg.d/diff saying "This cron-apt run has generated
+different output than the last invocation. Incuding the output diff."
+
+I have a /etc/cron-apt/config-hourly with MAILON="changes" invoked
+hourly, while the normal daily cronjob still has MAILON="upgrade".
+That way, I am not swamped by hourly update requests, but I get update
+requests _once_ immediately after the packages have appeared in the
+archive, and from there on on a daily basis.
+
+Please let me know what you think.
+
+Greetings
+Marc
+
+--- cron-apt.orig	2004-08-08 12:03:31.000000000 +0200
++++ cron-apt	2004-08-08 12:39:17.000000000 +0200
+@@ -73,6 +73,9 @@
+ ACTIONLOG=/var/log/cron-apt/actionlog
+ INITLOG=/var/log/cron-apt/initlog
+ LOG=/var/log/cron-apt/log
++REF=/var/log/cron-apt/reflog
++OLDREF=/var/log/cron-apt/reflog.old
++DIFF=/var/log/cron-apt/reflog.diff
+ MAILTO=root
+ # error, always
+ MAILON=error
+@@ -230,6 +233,9 @@
+ ############################### script ########################################
+ # Always run mailit before exit.
+ 
++touch $REF
++mv $REF $OLDREF
++touch $REF
+ for ACTIONF in $(ls $ACTIONDIR) ; do
+     if echo "$ACTIONF" | grep "~" > /dev/null 2>&1 ; then
+ 	# Temporary file, skipping.
+@@ -288,6 +294,7 @@
+ 			    createloginfo $ACTIONF
+ 			fi
+ 		    fi
++                    tail -n +2 $TEMP >> $REF
+ 		done
+ 		exit
+ 		})
+@@ -298,4 +305,9 @@
+     fi
+ done
+ 
++if [ "$MAILON" = "changes" ] && ! diff -u $OLDREF $REF > $DIFF; then
++    createdivinfo $MAIL "" $DIFF $MAILMSGDIR/diff "" ""
++fi
++rm -f $DIFF
++
+ mailit
