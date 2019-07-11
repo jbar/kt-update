@@ -1,6 +1,6 @@
 # bash completion for kt-update/kt
 
-_ktdist()
+_ktupdate()
 {
 	local cur prev options
 
@@ -26,7 +26,6 @@ _ktdist()
 		options="$options \
 			--ktserver \
 			--identifier \
-			--report \
 			--listids \
 			--printconf \
 			--simulate \
@@ -39,9 +38,6 @@ _ktdist()
 		case $prev in
 			-I|--identifier)
 				COMPREPLY=( $( command kt-update --listids 2>/dev/null | awk ' /^'"$cur"'/ { print $1 ; }' ) )
-				return ;;
-			-R|--report)
-				COMPREPLY=( $( compgen -W "never diff always" -- "$cur" ) )
 				return ;;
 			-m|--media)
 				COMPREPLY=( $( compgen -d -S "/" -- "$cur" ) )
@@ -74,5 +70,5 @@ _ktdist()
 		fi
 	fi
 }
-complete -F _ktdist kt-update
-complete -F _ktdist kt
+complete -F _ktupdate kt-update
+complete -F _ktupdate kt

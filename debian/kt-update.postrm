@@ -11,11 +11,6 @@ case "$1" in
     ;;
 
     upgrade)
-		dpkg-maintscript-helper rm_conffile /etc/kt-update/action.d/3-download -- "$@"
-		dpkg-maintscript-helper rm_conffile /etc/kt-update/action.d/0-update -- "$@"
-		dpkg-maintscript-helper rm_conffile /etc/kt-update/config -- "$@"
-		dpkg-maintscript-helper rm_conffile /etc/cron.d/kt-update -- "$@"
-		dpkg-maintscript-helper rm_conffile /etc/kt-update/conf.d/example.conf -- "$@"
     ;;
 
     remove|failed-upgrade|abort-install|abort-upgrade|disappear)
