@@ -9,13 +9,11 @@ kt-update - lightweight distribution management.
 
 # SYNOPSIS
 
-**kt-update** [OPTIONS...]  [*ACTIONS* [OPTIONS...] ...] [*+= PACKAGES...*] \[*-= PACKAGES...*]
-
 **kt** [OPTIONS...]  *ACTIONS* [OPTIONS...] ... [*+= PACKAGES...*] \[*-= PACKAGES...*]
 
-Historically, **kt-update** run default actions (update upgrade) when called without arguments.
-**kt** came next, it is shortest to write and have no default actions. Beside this, both are the same thing.
+**kt-update** [OPTIONS...]  *ACTIONS* [OPTIONS...] ... [*+= PACKAGES...*] \[*-= PACKAGES...*]
 
+**kt** is shortest to write. Beside this, both are the same thing.
 
 # DESCRIPTION
 
@@ -97,9 +95,6 @@ It may send notification using **kt-notify**. See NOTES below.
 
 **-n**, **--no-ktsource**
 :  remove apt source list given by **auth** action
-
-**-M**, **--monitor** *PACKAGE*
-:  focus update's notification on a given package
 
 
 ## Option for **upgrade**, **install**, **purge**, **checknfix**, and **clean** actions:

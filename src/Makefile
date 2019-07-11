@@ -20,7 +20,7 @@ install: kt-update kt-update.env
 	# Bin
 	mkdir -p $(DESTDIR)$(BINDIR)
 	install -m755 kt $(DESTDIR)$(BINDIR)
-	install -m755 kt-update $(DESTDIR)$(BINDIR)
+	ln -s kt $(DESTDIR)$(BINDIR)/kt-update
 	install -m644 kt-update.env $(DESTDIR)$(BINDIR)
 	# Logrotate
 	mkdir -p $(DESTDIR)$(LOGROTDIR)

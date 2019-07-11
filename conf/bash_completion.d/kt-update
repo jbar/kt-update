@@ -10,9 +10,9 @@ _ktupdate()
 	if [[ "$cur" == -* ]]; then
 		case ${COMP_WORDS[COMP_CWORD-1]} in
 			update)
-				options='--media --monitor --no-ktsource' ;;
+				options='--media --no-ktsource' ;;
 			install|+=)
-				options='--media --monitor --no-ktsource --download-only' ;;
+				options='--media --no-ktsource --download-only' ;;
 			upgrade)
 				options='--download-only' ;;
 			saveconf)
@@ -42,9 +42,6 @@ _ktupdate()
 			-m|--media)
 				COMPREPLY=( $( compgen -d -S "/" -- "$cur" ) )
 				compopt -o nospace
-				return ;;
-			-M|--monitor)
-				COMPREPLY=( $( command dpkg-query --show --showformat '${Package}\n' | grep "^$cur" ) )
 				return ;;
 			-S|--ktserver)
 				return ;;

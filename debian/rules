@@ -1,6 +1,4 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper.
-# GNU copyright 1997 to 1999 by Joey Hess.
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -11,5 +9,5 @@
 	dh $@
 
 override_dh_auto_build:
-	make DEFAULTID=stable
+	make DEFAULTID=buster-vanilla
 

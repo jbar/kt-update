@@ -1,10 +1,10 @@
-kt-update (0.18.4) UNRELEASED; urgency=medium
+kt-update (0.18.5) UNRELEASED; urgency=medium
 
   * First debian packaging
   * clean some gaussian stuff
   * fix some lintian errors/warnings
 
- -- Jean-Jacques Brucker <jean-jacquesbrucker@supersonicimagine.com>  Thu, 11 Jul 2019 16:55:10 +0200
+ -- Jean-Jacques Brucker <jean-jacquesbrucker@supersonicimagine.com>  Thu, 11 Jul 2019 17:37:28 +0200
 
 kt-update (0.18.2gaussian2) endive; urgency=medium
 

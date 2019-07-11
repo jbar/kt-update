@@ -2,7 +2,7 @@ ETCDIR=/etc/kt-update
 DOCDIR=/usr/share/doc/kt-update
 CERTDIR=/etc/ssl/certs
 COMPLETIONDIR=/usr/share/bash-completion/completions
-DEFAULTSERVERURI=https://raw.githubusercontent.com/jbar/server-example
+DEFAULTSERVERURI=https://raw.githubusercontent.com/jbar/kt-update/debian/server-example
 DEFAULTID=stable
 
 01default.conf: example.conf

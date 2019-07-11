@@ -108,7 +108,6 @@ Actions (need root permissions, cf. sudo):
 Options for update (and install) actions:
     -m, --media PATH     update from a PATH (mounted ISO) in addition to other sources
     -n, --no-ktsource    remove apt source list given from kt-server
-    -M, --monitor PKG    focus update's notification on a given package
 Option for upgrade, install, purge, checknfix, and clean actions:
     -s, --simulate       No-act. Perform ordering simulation
 Option for upgrade and install actions:
@@ -125,7 +124,6 @@ for ((;$#;)) ; do
 	case "$1" in
 		-m|--media) shift ; kt_actions[update]+=" -m $(readlink -f "$1")" || { echo "$helpmsg" ; exit 2 ; } ;;
 		-n|--no-ktsource) kt_actions[update]+=" -n" ;;
-		-M|--monitor) shift ; [ "$1" ] && ACTION_FILTER_update='kt-notify.py update -n -m '"$1" || { echo "$helpmsg" ; exit 2 ; } ;;
 		-S|--ktserver) shift ; KT_SERVER_URI="$1" ; [ "$1" ] || { echo "$helpmsg" ; exit 2 ; }
 			kt_actions[saveconf]+=" KT_SERVER_URI"
 			;;
