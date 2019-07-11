@@ -1,22 +1,38 @@
-CRONDIR=/etc/cron.d
-BINDIR=/usr/sbin
-LOGROTDIR=/etc/logrotate.d
-SHAREDIR=/usr/share/cron-apt
+# Copyright © 2017-2018 by SuperSonic Imagine, SA
 
-all:
+ifdef DESTDIR
+prefix = /usr
+else
+prefix = /usr/local
+endif
+
+# Install Variables
+BINDIR=$(prefix)/bin
+LOGROTDIR=/etc/logrotate.d
+SHAREDIR=$(prefix)/share/kt-update
+
+.PHONY: all build clean install uninstall
+all : build
 
 clean:
 
-install: cron.d cron-apt functions
-	# Cron job
-	mkdir -p $(DESTDIR)$(CRONDIR)
-	install -m644 cron.d $(DESTDIR)$(CRONDIR)/cron-apt
+install: kt-update kt-update.env
 	# Bin
 	mkdir -p $(DESTDIR)$(BINDIR)
-	install -m755 cron-apt $(DESTDIR)$(BINDIR)
-	# Shared functions
-	mkdir -p $(DESTDIR)$(SHAREDIR)
-	install -m644 functions $(DESTDIR)$(SHAREDIR)/functions
+	install -m755 kt $(DESTDIR)$(BINDIR)
+	install -m755 kt-update $(DESTDIR)$(BINDIR)
+	install -m644 kt-update.env $(DESTDIR)$(BINDIR)
 	# Logrotate
 	mkdir -p $(DESTDIR)$(LOGROTDIR)
-	install -m644 logrotate $(DESTDIR)$(LOGROTDIR)/cron-apt
+	install -m644 logrotate $(DESTDIR)$(LOGROTDIR)/kt-update
+	# ShareDir
+	mkdir -p $(DESTDIR)$(SHAREDIR)
+
+uninstall:
+	rm $(DESTDIR)$(CRONDIR)/kt-update
+	rm $(DESTDIR)$(BINDIR)/kt
+	rm $(DESTDIR)$(BINDIR)/kt-update
+	rm $(DESTDIR)$(BINDIR)/kt-update.env
+	rm $(DESTDIR)$(LOGROTDIR)/kt-update
+	rm -rf $(DESTDIR)$(SHAREDIR)
+

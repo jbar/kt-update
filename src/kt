@@ -1,0 +1,291 @@
+#!/bin/bash
+#
+# Copyright (C) 2018-2019 Super Sonic Imagine <software@supersonicimagine.com>
+# Copyright (C) 2002-2011,2013 Ola Lundqvist <ola@inguza.com>
+# Copyright (C) 2004-2011,2013 Marc Haber <mh+debian-bugs@zugschlus.de>
+# Copyright (C) 2004,2007,2013 Bob Proulx <bob@proulx.com>
+# Copyright (C) 2004           Marc Sherman <msherman@projectile.ca>
+# Copyright (C) 2004           David Weinehall
+# Copyright (C) 2003           Sean Finney <seanius@seanius.net>
+# Copyright (C) 2002           Marcel Kolaja <marcel@solnet.cz>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301 USA.
+#
+
+#source our bash library
+. "$(readlink -f "$0")-update.env"
+
+PROGNAME="kt-update"
+
+UMASK_APT="022"
+
+unset umounts
+if ! mount | grep -q "^proc\>" ; then
+	umounts="binfmt_misc /proc"
+	mount -t proc proc /proc
+fi
+if ! mount | grep -q "^sysfs\>" ; then
+	umounts="/sys $umounts"
+	mount -t sysfs sysfs /sys
+fi
+if ! mount | grep -q "^devpts\>" ; then
+	umounts="/dev/pts $umounts"
+	mount -t devpts devpts /dev/pts
+fi
+
+trap '{ [ "$umounts" ] && umount -vf $umounts ; }' EXIT
+
+unset kt_runandexit
+unset kt_actionslist
+declare -A kt_actions=(
+	[auth]=kt_auth
+	[check]=kt_check
+	[fix]=kt_checknfix
+	[checknfix]=kt_checknfix
+	[update]=kt_update
+	[download]=kt_download
+	[upgrade]=kt_upgrade
+	[clean]=kt_clean
+	[install]=kt_install
+	[purge]=kt_purge
+)
+
+EXTRAKEYS=$( for key in "${!kt_actions[@]}" ; do echo -n "ACTION_FILTER_$key ACTION_SUCCESS_$key ACTION_FAIL_$key ACTION_DIFF_$key " ; done )
+
+# Config files may change previous default values and have to declare a IDENTIFIER (serial) parameter.
+# Note: POSIX Shell sort '*' by names, cf: http://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_13_03
+for f in /etc/kt-update/conf.d/*.conf ; do
+	kt_conf -r "$f" $EXTRAKEYS
+done
+
+# Remove empty EXTRAKEYS for printconf and -p
+EXTRAKEYS=$( for key in $EXTRAKEYS ; do eval [ \"\$$key\" ] && echo -n "$key " ; done )
+
+# Declare actions which are not conf keys dependant
+kt_actions[printconf]="kt_conf -p $EXTRAKEYS"
+kt_actions[saveconf]="kt_conf -w /etc/kt-update/conf.d/90user.conf"
+
+helpmsg="Usage: $0 [OPTIONS...]  [ACTIONS [OPTIONS...] ...] [+= PACKAGES...] [-= PACKAGES...]
+
+General options:
+    -S, --ktserver URI   kt server to use for auth (current: $KT_SERVER_URI)
+    -I, --identifier ID  Identifier to get a distro configuration from ktserver (current: $IDENTIFIER)
+    -l, --listids        if kt server provide a list of configuration identifiers, show it and exit
+    -p, --printconf      print all configurable values and exit
+    -h, --help           this help
+    -V, --version        show version and exit
+
+Actions (need root permissions, cf. sudo):
+    auth             force re-authentication (to get customized distro configuration)
+    check            check packages configuration and packages status
+    checknfix        check packages conf and status, and try repair if NOK
+    clean            autoremove obsolete packages and purge downloaded *.deb files
+    download         only download needed packages (deprecated, use -d option)
+    printconf        print all configurable values (same as -p option)
+    saveconf         save given identifier (-I) or ktserver (-S) in configurable values
+    switch           equivalent to: auth update saveconf clean upgrade checknfix clean
+    up               put your distro up to date, equivalent to: update upgrade
+    update           check for packages updates
+    upgrade          install newest packages, resolving some changing dependencies
+    dist-upgrade     equivalent to upgrade
+
+    +=, install PACKAGES...  install extra packages (if no conflict with distro configuration)
+    -=, purge   PACKAGES...  purge packages (if possible by your distro configuration)
+
+Options for update (and install) actions:
+    -m, --media PATH     update from a PATH (mounted ISO) in addition to other sources
+    -n, --no-ktsource    remove apt source list given from kt-server
+    -M, --monitor PKG    focus update's notification on a given package
+Option for upgrade, install, purge, checknfix, and clean actions:
+    -s, --simulate       No-act. Perform ordering simulation
+Option for upgrade and install actions:
+    -d, --download-only  Download only ; packages are only retrieved, not unpacked or installed.
+Option for saveconf action:
+    -a, --ask            interactive mode to set and save main configurable value
+Option for clean (and switch) actions:
+    -B, --big            remove also all packages not checked explicitly by your configuration
+"
+
+############################# arguments #######################################
+
+for ((;$#;)) ; do
+	case "$1" in
+		-m|--media) shift ; kt_actions[update]+=" -m $(readlink -f "$1")" || { echo "$helpmsg" ; exit 2 ; } ;;
+		-n|--no-ktsource) kt_actions[update]+=" -n" ;;
+		-M|--monitor) shift ; [ "$1" ] && ACTION_FILTER_update='kt-notify.py update -n -m '"$1" || { echo "$helpmsg" ; exit 2 ; } ;;
+		-S|--ktserver) shift ; KT_SERVER_URI="$1" ; [ "$1" ] || { echo "$helpmsg" ; exit 2 ; }
+			kt_actions[saveconf]+=" KT_SERVER_URI"
+			;;
+		-I|--identifier) shift ; IDENTIFIER="$1" ; [ "$1" ] || { echo "$helpmsg" ; exit 2 ; }
+			kt_actions[saveconf]+=" IDENTIFIER"
+			;;
+		-s|--simulate) APT_OPTIONS+=" -o APT::Get::Simulate=true";;
+		-d|--download-only) APT_OPTIONS+=" -o APT::Get::Download-Only=true";;
+		-a|--ask) kt_actions[saveconf]="kt_conf -i /etc/kt-update/conf.d/90user.conf" ;;
+		-B|--big) kt_actions[clean]="kt_clean -B" ;;
+		-p|--printconf) kt_runandexit="kt_conf -p $EXTRAKEYS" ;;
+		-l|--listids) kt_runandexit=kt_listids ;;
+		-h|--h*) kt_runandexit='eval echo "$helpmsg"' ;;
+		-V|--vers*) kt_runandexit="echo $PROGNAME $KT_VERSION" ;;
+		dist-upgrade) kt_actionslist+=" upgrade" ;;
+		+=|install)
+			while [ "$2" ] && ! [[ "$2"  =~ ^[-+]=$ ]] ; do
+				#following regex comes from https://www.debian.org/doc/manuals/debmake-doc/ch05.en.html#name-version
+				[[ "$2" =~ ^[-+.a-z0-9]{2,}$ ]] && kt_actions[install]+=" $2" || echo "Warning: ignoring '$2' as it is NOT package name." >&2
+				shift
+			done
+			[[ " $kt_actionslist " =~ [[:space:]]update[[:space:]] ]] || kt_actionslist+=" update"
+			[[ " $kt_actionslist " =~ [[:space:]]install[[:space:]] ]] || kt_actionslist+=" install"
+			;;
+		-=|purge)
+			while [ "$2" ] && ! [[ "$2"  =~ ^[-+]=$ ]] ; do
+				#following regex comes from https://www.debian.org/doc/manuals/debmake-doc/ch05.en.html#name-version
+				[[ "$2" =~ ^[-+.a-z0-9]{2,}$ ]] && kt_actions[purge]+=" $2" || echo "Warning: ignoring '$2' as it is NOT package name." >&2
+				shift
+			done
+			[[ " $kt_actionslist " =~ [[:space:]]update[[:space:]] ]] || kt_actionslist+=" update"
+			[[ " $kt_actionslist " =~ [[:space:]]purge[[:space:]] ]] || kt_actionslist+=" purge"
+			;;
+		-*) echo -e "Error: Unrecognized option $1\n$helpmsg" >&2 ; exit 2 ;;
+		up) kt_actionslist+=" update upgrade" ;;
+		switch) kt_actionslist+=" auth update saveconf clean upgrade checknfix clean" ;;
+		*) [[ "${kt_actions[$1]}" ]] && kt_actionslist+=" $1" || { echo -e "Error: Unrecognized action $1\n$helpmsg" >&2 ; exit 2 ; } ;;
+	esac
+	shift
+done
+
+[ "$kt_runandexit" ] && { $kt_runandexit ; exit ; }
+
+[ "$kt_actionslist" ] || { echo -e "$PROGNAME $KT_VERSION\n$helpmsg" >&2 ; exit 2 ; }
+
+
+_onexit() {
+	[ "$umounts" ] && umount -vf $umounts
+	[ -d "$TMPDIR" ] && rm -rf "$TMPDIR"
+	[ -x "/usr/bin/dotlockfile" ] && dotlockfile -u $LOCKFILE
+}
+
+######################## defaults dirs and files ##############################
+
+LIBDIR="/var/lib/$PROGNAME"
+TMPDIR=$(mktemp -d -t "$PROGNAME".XXXXXX)
+if [ $? -ne 0 ]; then
+	echo "Error: Can not create a safe temporary directory." | logger -s -p user.notice -t "$PROGNAME" --id=$$ 
+	exit 1
+fi
+
+LOGFILE="/var/log/$PROGNAME/log"
+LOCKFILE="$LIBDIR/lockfile"
+REPORTDIR="$LIBDIR/reports"
+
+trap _onexit EXIT
+
+############################### check #########################################
+
+mkdir -p "$REPORTDIR" || exit 1
+
+echo "KT-UPDATE RUN [$KT_VERSION][$IDENTIFIER][$KT_SERVER_URI]: $(date)" | tee "$TMPDIR/init.log" >&2
+
+# Check the tmpdir size and exit if the space is too small.
+checktmpsize() {
+	# Minimum amount of diskspace needed in /tmp in kbytes
+	local MINTMPDIRSIZE=100
+	# Sector size
+	local SSIZE=$(stat --file-system --format=%S $TMPDIR)
+	# Number of free sectors
+	local FSCOUNT=$(stat --file-system --format=%a $TMPDIR)
+	# Check to avoid overflow in calculations when using dash 2^(32-1-6)
+	# The number size above is got from 32768/512=2^6
+	if [ "$FSCOUNT" -lt 33554432 ] ; then
+		if [ "$((SSIZE * FSCOUNT / 1024))" -lt "$MINTMPDIRSIZE" ]; then
+			echo "Warning: Not enough free space in $TMPDIR." | tee -a "$TMPDIR/init.log" | logger -s -p user.notice -t "$PROGNAME" --id=$$
+			return 1
+		fi
+	fi
+}
+checktmpsize
+
+################## try to take out a lock, terminate if unsuccessful ##########
+
+if [ -x /usr/bin/dotlockfile ] ; then
+	if ! dotlockfile -l -p -r 1 $LOCKFILE; then
+		# create log entry
+		echo "Error: cannot acquire $PROGNAME lock." | tee -a "$TMPDIR/init.log" | logger -p user.notice -t "$PROGNAME" --id=$$
+		exit 1
+	fi
+else
+	echo "Warning: dotlockfile not installed. Shit may happen..." | tee -a "$TMPDIR/init.log" | logger -s -p user.notice -t "$PROGNAME" --id=$$
+fi
+
+cat "$TMPDIR/init.log" >> "$LOGFILE"
+
+# Backup init.log, to be used in futur diff
+cp "$TMPDIR/init.log" "$REPORTDIR/init.log"
+
+############################### script ########################################
+
+for ACTION in $kt_actionslist ; do
+	actionf="${kt_actions[$ACTION]}"
+
+	echo "KT-UPDATE ACTION: $actionf ($(date +"%T"))" | tee -a "$TMPDIR/$ACTION.log" "$LOGFILE" >&2
+
+	eval filter="\$ACTION_FILTER_$ACTION"
+	UMASK_SAVE=$(umask)
+	umask $UMASK_APT
+	#set -x
+	$actionf 2>&1 | tee -a "$TMPDIR/$ACTION.log" "$LOGFILE" | ( eval "${filter:-cat}" )
+	pipestatus=(${PIPESTATUS[@]})
+	if ((pipestatus[1] == 141)) ; then
+		echo "Warning: ACTION_FILTER_$ACTION raised a SIGPIPE (does it read stdin ?). Ignoring it..." | tee >(logger -p user.notice -t "$PROGNAME" --id=$$ ) >&2
+		$actionf 2>&1 | tee -a "$TMPDIR/$ACTION.log" "$LOGFILE"
+		pipestatus=(${PIPESTATUS[@]})
+	fi
+	#set +x
+	umask $UMASK_SAVE
+
+	eval onsuccess="\$ACTION_SUCCESS_$ACTION"
+	eval onfail="\$ACTION_FAIL_$ACTION"
+	FAIL_STATUS=${pipestatus[0]}
+	if ((pipestatus[0])) ; then
+		( eval "$onfail" )
+	else
+		( eval "$onsuccess" )
+	fi
+
+	if ((pipestatus[0]|pipestatus[1]|pipestatus[2])); then
+		# An error has occured.
+		echo "action $actionf: Error (${pipestatus[@]}) ($(wc "$TMPDIR/$ACTION.log") )" | logger -p user.notice -t "$PROGNAME" --id=$$
+	else
+		# No error has occured.
+		echo "action $actionf: OK ($(wc "$TMPDIR/$ACTION.log") )" | logger -p user.notice -t "$PROGNAME" --id=$$
+	fi
+
+	eval ondiff="\$ACTION_DIFF_$ACTION"
+	if [ "$ondiff" ] \
+	  && ! diff -q --ignore-matching-lines="[0-2][0-9]:[0-5][0-9]:[0-5][0-9]" "$REPORTDIR/$ACTION.log"  "$TMPDIR/$ACTION.log"
+	then
+		#ondiff=${ondiff//%\{previous\}/"$REPORTDIR/$ACTION.log"}
+		PREVIOUS_ACTION_LOG="$REPORTDIR/$ACTION.log"
+		CURRENT_ACTION_LOG="$TMPDIR/$ACTION.log"
+		( eval "$ondiff" )
+	fi
+
+	# Backup $ACTION.log, to be used in futur diff
+	cp "$TMPDIR/$ACTION.log" "$REPORTDIR/$ACTION.log"
+
+	#exit on $actionf error
+	((pipestatus[0])) && exit ${pipestatus[0]}
+done

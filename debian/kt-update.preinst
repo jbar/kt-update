@@ -1,0 +1,27 @@
+#!/bin/sh -e
+# Kt-update preinst script using debconf
+
+case "$1" in
+	install)
+	;;
+
+	upgrade)
+		dpkg-maintscript-helper rm_conffile /etc/kt-update/action.d/3-download -- "$@"
+		dpkg-maintscript-helper rm_conffile /etc/kt-update/action.d/0-update -- "$@"
+		dpkg-maintscript-helper rm_conffile /etc/kt-update/config -- "$@"
+		dpkg-maintscript-helper rm_conffile /etc/cron.d/kt-update -- "$@"
+		dpkg-maintscript-helper rm_conffile /etc/kt-update/conf.d/example.conf -- "$@"
+	;;
+
+	abort-upgrade)
+	;;
+
+	*)
+        echo "preinst called with unknown argument \`$1'" >&2
+		exit 0
+	;;
+esac
+
+#DEBHELPER#
+
+exit 0

@@ -1,6 +1,0 @@
---- 3-download	Wed Apr 24 00:00:00 2002
-+++ 3-download-magic	Wed Jul 31 14:48:07 2002
-@@ -1,2 +1,2 @@
--upgrade -d -y
-+upgrade -d -u -y
- autoclean -y

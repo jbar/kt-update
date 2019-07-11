@@ -1,14 +1,9 @@
-This package was debianized by Ola Lundqvist <opal@debian.org> on
-Tue,  5 Mar 2002 09:07:31 +0100.
-
 Upstream Author:
-	Ola Lundqvist <ola@inguza.com>
-
-Homepage:
-	http://inguza.com/software/cron-apt/
+	Jean-Jacques Brucker <jean-jacques.brucker@supersonicimagine.com>
 
 Copyright:
 
+ Copyright (C) 2018-2019      Super Sonic Imagine <software@supersonicimagine.com>
  Copyright (C) 2002-2016      Ola Lundqvist <ola@inguza.com>
  Copyright (C) 2004,2007,2013,2016 Bob Proulx <bob@proulx.com>
  Copyright (C) 2016           Bas Zoetekouw <bas@debian.org>

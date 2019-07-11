@@ -1,0 +1,78 @@
+# bash completion for kt-update/kt
+
+_ktdist()
+{
+	local cur prev options
+
+	COMPREPLY=()
+	cur=${COMP_WORDS[COMP_CWORD]}
+
+	if [[ "$cur" == -* ]]; then
+		case ${COMP_WORDS[COMP_CWORD-1]} in
+			update)
+				options='--media --monitor --no-ktsource' ;;
+			install|+=)
+				options='--media --monitor --no-ktsource --download-only' ;;
+			upgrade)
+				options='--download-only' ;;
+			saveconf)
+				options='--ask' ;;
+			clean|switch)
+				options='--big' ;;
+			*)
+				options='' ;;
+		esac
+
+		options="$options \
+			--ktserver \
+			--identifier \
+			--report \
+			--listids \
+			--printconf \
+			--simulate \
+			--help \
+			--version"
+
+		COMPREPLY=( $( compgen -W "$options" -- $cur ) )
+	else
+		prev=${COMP_WORDS[COMP_CWORD-1]}
+		case $prev in
+			-I|--identifier)
+				COMPREPLY=( $( command kt-update --listids 2>/dev/null | awk ' /^'"$cur"'/ { print $1 ; }' ) )
+				return ;;
+			-R|--report)
+				COMPREPLY=( $( compgen -W "never diff always" -- "$cur" ) )
+				return ;;
+			-m|--media)
+				COMPREPLY=( $( compgen -d -S "/" -- "$cur" ) )
+				compopt -o nospace
+				return ;;
+			-M|--monitor)
+				COMPREPLY=( $( command dpkg-query --show --showformat '${Package}\n' | grep "^$cur" ) )
+				return ;;
+			-S|--ktserver)
+				return ;;
+			# --help, --version, etc. won't execute any actions, so don't complete anything
+			-l|--listids)
+				return ;;
+			-p|--printconf)
+				return ;;
+			-h|--help)
+				return ;;
+			-V|--version)     
+				return ;;
+		esac
+
+		if grep -q "\<\(install\|+=\)\>" <<< "${COMP_WORDS[@]}" ; then
+	                COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" 2> /dev/null ) )
+		elif grep -q "\<\(purge\|-=\)\>" <<< "${COMP_WORDS[@]}" ; then
+			COMPREPLY=( $( _xfunc dpkg _comp_dpkg_purgeable_packages $cur ) )
+		else
+			COMPREPLY=( $( compgen -W " \
+				auth check checknfix update install purge \
+				upgrade clean saveconf printconf switch up" -- "$cur" ) )
+		fi
+	fi
+}
+complete -F _ktdist kt-update
+complete -F _ktdist kt

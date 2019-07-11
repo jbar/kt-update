@@ -1,7 +1,7 @@
 MAKEDIRS = src conf man
 
-LOGDIR=/var/log/cron-apt
-LIBDIR=/var/lib/cron-apt
+LOGDIR=/var/log/kt-update
+LIBDIR=/var/lib/kt-update
 
 all:
 	for md in $(MAKEDIRS) ; do \
@@ -21,7 +21,15 @@ install:
 	mkdir -p $(DESTDIR)$(LOGDIR)
 	# Lib
 	mkdir -p $(DESTDIR)$(LIBDIR)
-	mkdir -p $(DESTDIR)$(LIBDIR)/mailchanges
+
+uninstall:
+	for md in $(MAKEDIRS) ; do \
+		$(MAKE) -C $$md $@ ; \
+	done
+	# Log
+	rm -rv $(DESTDIR)$(LOGDIR)
+	# Lib
+	rm -rv $(DESTDIR)$(LIBDIR)
 
 test: test.forced
 

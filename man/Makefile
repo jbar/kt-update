@@ -1,17 +1,20 @@
 MANDIR=/usr/share/man
 
 all:
-	docbook-to-man cron-apt.sgml > cron-apt.8
-	docbook-to-man cron-apt.fr.sgml > cron-apt.fr.8
-	gzip -9 *.8
-
+	pandoc -s -t man ../README.md  | gzip > kt-update.8.gz
+	ln -s kt-update.8.gz kt.8.gz
 clean:
-	rm -f cron-apt.8* cron-apt.fr.8*
+	rm -f kt-update.8.gz kt.8.gz
 
-install: cron-apt.8.gz cron-apt.fr.8.gz
+install: kt-update.8.gz
 	mkdir -p $(DESTDIR)$(MANDIR)/man8
-	install -m644 cron-apt.8.gz \
+	install -m644 kt-update.8.gz \
 		$(DESTDIR)$(MANDIR)/man8
-	mkdir -p $(DESTDIR)$(MANDIR)/fr/man8
-	install -m644 cron-apt.fr.8.gz \
-		$(DESTDIR)$(MANDIR)/fr/man8/cron-apt.8.gz
+	ln -s kt-update.8.gz $(DESTDIR)$(MANDIR)/man8/kt.8.gz
+	#mkdir -p $(DESTDIR)$(MANDIR)/fr/man8
+	#install -m644 kt-update.fr.8.gz \
+	#	$(DESTDIR)$(MANDIR)/fr/man8/kt-update.8.gz
+
+uninstall:
+	#rm $(DESTDIR)$(MANDIR)/fr/man8/kt-update.8.gz
+	rm $(DESTDIR)$(MANDIR)/man8/kt-update.8.gz $(DESTDIR)$(MANDIR)/man8/kt.8.gz

@@ -1,26 +1,35 @@
-ETCDIR=/etc/cron-apt
-ACTIONDIR=$(ETCDIR)/action.d
-DOCDIR=/usr/share/doc/cron-apt
+ETCDIR=/etc/kt-update
+DOCDIR=/usr/share/doc/kt-update
+CERTDIR=/etc/ssl/certs
+COMPLETIONDIR=/etc/bash_completion.d
+DEFAULTSERVERURI=http://kt.ssi.lan
+DEFAULTID=stable
 
-all:
+01default.conf: example.conf
+	sed 's,^#\?IDENTIFIER=.*,IDENTIFIER="$(DEFAULTID)", ' example.conf > 01default.conf
+	sed -i 's,^#\?KT_SERVER_URI=.*,KT_SERVER_URI="$(DEFAULTSERVERURI)", ' 01default.conf
+	echo '# Default options when using wget, you better not touch it...' >> 01default.conf
+	echo 'WGET_OPTIONS+=" --ca-directory=$(CERTDIR)"' >> 01default.conf
+
+all: 01default.conf bash_completion.d/kt-get
 
 clean:
+	rm 01default.conf
 
-install: install-examples config 0-update 3-download
-	mkdir -p $(DESTDIR)$(ETCDIR)
-	mkdir -p $(DESTDIR)$(ACTIONDIR)
-	mkdir -p $(DESTDIR)$(ETCDIR)/config.d
-	mkdir -p $(DESTDIR)$(ETCDIR)/mailmsg.d
-	mkdir -p $(DESTDIR)$(ETCDIR)/syslogmsg.d
-	mkdir -p $(DESTDIR)$(ETCDIR)/mailonmsgs
-	mkdir -p $(DESTDIR)$(ETCDIR)/syslogonmsgs
-	mkdir -p $(DESTDIR)$(ETCDIR)/errormsg.d
-	mkdir -p $(DESTDIR)$(ETCDIR)/logmsg.d
-	install -m644 config $(DESTDIR)$(ETCDIR)
-	install -m644 0-update $(DESTDIR)$(ACTIONDIR)/
-	install -m644 3-download $(DESTDIR)$(ACTIONDIR)/
+install: install-examples 01default.conf 02notifs.conf
+	mkdir -p $(DESTDIR)$(ETCDIR)/conf.d
+	install -m644 01default.conf 02notifs.conf $(DESTDIR)$(ETCDIR)/conf.d
+	mkdir -p $(DESTDIR)$(CERTDIR)
+	install -m644 *.pem $(DESTDIR)$(CERTDIR)/
+	mkdir -p $(DESTDIR)$(COMPLETIONDIR)
+	install -m644 bash_completion.d/kt-get $(DESTDIR)$(COMPLETIONDIR)/
 
-install-examples: config 0-update 3-download 9-notify
-	mkdir -p $(DESTDIR)$(DOCDIR)/examples
-	install -m644 [0-9]-* -p $(DESTDIR)$(DOCDIR)/examples
-	install -m644 config $(DESTDIR)$(DOCDIR)/examples
+install-examples: example.conf
+	mkdir -p $(DESTDIR)$(DOCDIR)
+	install -m644 example.conf $(DESTDIR)$(DOCDIR)/
+
+uninstall:
+	rm -rv $(DESTDIR)$(ETCDIR)
+	rm -rv $(DESTDIR)$(DOCDIR)
+	rm -v $(DESTDIR)$(COMPLETIONDIR)/kt-get
+# TODO: uninstall *.pem files ...

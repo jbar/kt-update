@@ -1,3 +1,5 @@
+--- CRON-APT ---
+
 Ola Lundqvist <ola@inguza.com>
  Main author for everything if nothing else is stated.
 
@@ -36,3 +38,16 @@ Marcel Kolaja <marcel@solnet.cz>
 
 Edward Malone <edward.malone88@gmail.com>
  Code suggestion (more or less a patch) for mail headers support.
+
+
+--- KT-UPDATE ---
+
+Jean-Jacques Brucker <jean-jacques.brucker@supersonicimagine.com>
+ Completly rewrite cron-apt for gaussian purpose.
+
+Cheng Xu <cheng.xu@supersonicimagine.com>
+ Rename all "cron-apt" by "kt-update".
+
+Maxime Dementyev <maxime.dementyev@supersonicimagine.com>
+ Implement all notifications and progress bars.
+

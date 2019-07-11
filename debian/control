@@ -1,23 +1,18 @@
-Source: cron-apt
+Source: kt-update
 Section: admin
 Priority: optional
-Maintainer: Ola Lundqvist <opal@debian.org>
-Build-Depends-Indep: docbook-to-man
-Build-Depends: debhelper (>= 8.0.0)
+Maintainer: Jean-Jacques Brucker <jean-jacques.brucker@supersonicimagine.com>
+Build-Depends: debhelper (>= 8.0.0), pandoc
 Standards-Version: 3.9.6
 
-Package: cron-apt
+Package: kt-update
 Architecture: all
-Depends: apt, ${misc:Depends}
-Recommends: liblockfile1, mail-transport-agent, cron | cron-daemon
+Depends: apt, bsdutils, wget, ${misc:Depends}, bash ( >= 4.4 )
+Recommends: liblockfile1, cron | cron-daemon, kt-notify, apt-transport-https
+Suggests: xsplashaa
 Description: automatic update of packages using apt-get
  Contains a tool that is run by a cron job at regular intervals. By default it
  just updates the package list and downloads new packages without installing.
- You can instruct it to run anything that you can do with apt-get
- (or aptitude).
- .
- It can optionally send mail to the system administrator on errors, log
- to syslog or a separate log file.
  .
  Observe that this tool may be a security risk, so you should not set it
  to do more than necessary. Automatic upgrade of all packages is NOT

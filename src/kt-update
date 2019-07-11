@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# Copyright (C) 2018-2019 Super Sonic Imagine <software@supersonicimagine.com>
+
+if (($#)) ; then
+	exec "$(dirname "$0")/kt" "$@"
+else
+	exec "$(dirname "$0")/kt" update upgrade
+fi
+

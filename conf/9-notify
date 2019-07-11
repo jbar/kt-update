@@ -1,2 +1,0 @@
-# Use it with MAILON=output to tell you when upgrades is available.
--q -q --no-act upgrade
