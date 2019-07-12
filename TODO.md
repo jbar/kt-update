@@ -7,6 +7,7 @@ TODO (there is also some "TODO" inside sources):
     we may call the managed file kt-update
 * support new "#~kt:auth:..." directives to manage a file /etc/kt-update/conf.d/50ktserver.conf.
     To be decided: directly (very permissive) or only some configurable values (changing APT_OPTIONS by server is the first need)
+* For both previous point: Add new option to select keyring (eg: /usr/share/keyrings/debian-maintainers.gpg) to verify this files, and only accept signed and verified files of such config (security issue)
 * low priority: support a new "#~kt:auth:apt-conf:..." directive to change apt conf also for apt, apt-get or aptitude.
 * stop putting stdout and stderr when running an action, then create conf keys ACTION_OUTFILTER_.. and  ACTION_ERRFILTER_..
 * low priority: use a default sheme if no sheme is recognized (it may me boring to always type "http://")
