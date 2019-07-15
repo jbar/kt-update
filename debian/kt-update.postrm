@@ -3,11 +3,9 @@
 
 case "$1" in
     purge)
-        if [ -d /var/log/kt-update ] ; then
-		rm -Rf /var/log/kt-update
-		rm -Rf /var/lib/kt-update
-		rm -f /etc/apt/sources.list.d/kt-media.list /etc/apt/sources.list.d/kt-remote.list
-	fi
+	rm -Rf /var/log/kt-update
+	rm -Rf /var/lib/kt-update
+	rm -f /etc/apt/sources.list.d/kt-media.list /etc/apt/sources.list.d/kt-remote.list
     ;;
 
     upgrade)
