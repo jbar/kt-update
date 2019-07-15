@@ -62,7 +62,7 @@ _ktupdate()
 			COMPREPLY=( $( _xfunc dpkg _comp_dpkg_purgeable_packages $cur ) )
 		else
 			COMPREPLY=( $( compgen -W " \
-				auth check checknfix update install purge \
+				getconf check checknfix update install purge \
 				upgrade clean saveconf printconf switch up" -- "$cur" ) )
 		fi
 	fi

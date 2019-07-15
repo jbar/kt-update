@@ -26,10 +26,10 @@ It may send notification using **kt-notify**. See NOTES below.
 # GENERAL OPTIONS
 
 **-S** *URI*, **--ktserver** *URI*
-:  kt server to use during authentication
+:  kt server to use to get a distribution configuration
 
 **-I** *ID*, **--identifier** *ID*
-:  Identifier to get a distro configuration from kt server
+:  Identifier to get a distribution configuration from kt server
 
 **-l**, **--listids**
 :  if kt server provide a list of configuration identifiers, show it and exit
@@ -46,8 +46,8 @@ It may send notification using **kt-notify**. See NOTES below.
 
 # ACTIONS (need root permissions)
 
-**auth**
-:  force re-authentication (to get customized distro configuration)
+**getconf**
+:  get a distribution configuration (extended apt sources.list)
 
 **check**
 :  check packages configuration and packages status
@@ -68,7 +68,7 @@ It may send notification using **kt-notify**. See NOTES below.
 :  save given identifier (-I) or ktserver (-S) in configurable values
 
 **switch**
-:  equivalent to: **auth** **update** **saveconf** **clean** **upgrade** **checknfix** **clean**
+:  equivalent to: **getconf** **update** **saveconf** **clean** **upgrade** **checknfix** **clean**
 
 **up**
 :  equivalent to: **update** **upgrade**
@@ -94,7 +94,7 @@ It may send notification using **kt-notify**. See NOTES below.
 :  update from a path (eg: mounted ISO) in addition to other sources
 
 **-n**, **--no-ktsource**
-:  remove apt source list given by **auth** action
+:  remove apt source list given by **getconf** action
 
 
 ## Option for **upgrade**, **install**, **purge**, **checknfix**, and **clean** actions:

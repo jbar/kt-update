@@ -51,7 +51,7 @@ trap '{ [ "$umounts" ] && umount -vf $umounts ; }' EXIT
 unset kt_runandexit
 unset kt_actionslist
 declare -A kt_actions=(
-	[auth]=kt_auth
+	[getconf]=kt_getconf
 	[check]=kt_check
 	[fix]=kt_checknfix
 	[checknfix]=kt_checknfix
@@ -81,22 +81,23 @@ kt_actions[saveconf]="kt_conf -w /etc/kt-update/conf.d/90user.conf"
 helpmsg="Usage: $0 [OPTIONS...]  [ACTIONS [OPTIONS...] ...] [+= PACKAGES...] [-= PACKAGES...]
 
 General options:
-    -S, --ktserver URI   kt server to use for auth (current: $KT_SERVER_URI)
-    -I, --identifier ID  Identifier to get a distro configuration from ktserver (current: $IDENTIFIER)
+    -S, --ktserver URI   kt server to use for getconf (current: $KT_SERVER_URI)
+    -I, --identifier ID  configuration identifier to get conf from ktserver (current: $IDENTIFIER)
     -l, --listids        if kt server provide a list of configuration identifiers, show it and exit
     -p, --printconf      print all configurable values and exit
     -h, --help           this help
     -V, --version        show version and exit
 
 Actions (need root permissions, cf. sudo):
-    auth             force re-authentication (to get customized distro configuration)
+    getconf          get distribution configuration (extended apt sources.list)
+    auth             equivalent to getconf
     check            check packages configuration and packages status
     checknfix        check packages conf and status, and try repair if NOK
     clean            autoremove obsolete packages and purge downloaded *.deb files
     download         only download needed packages (deprecated, use -d option)
     printconf        print all configurable values (same as -p option)
     saveconf         save given identifier (-I) or ktserver (-S) in configurable values
-    switch           equivalent to: auth update saveconf clean upgrade checknfix clean
+    switch           equivalent to: getconf update saveconf clean upgrade checknfix clean
     up               put your distro up to date, equivalent to: update upgrade
     update           check for packages updates
     upgrade          install newest packages, resolving some changing dependencies
@@ -139,6 +140,7 @@ for ((;$#;)) ; do
 		-h|--h*) kt_runandexit='eval echo "$helpmsg"' ;;
 		-V|--vers*) kt_runandexit="echo $PROGNAME $KT_VERSION" ;;
 		dist-upgrade) kt_actionslist+=" upgrade" ;;
+		auth) kt_actionslist+=" getconf" ;;
 		+=|install)
 			while [ "$2" ] && ! [[ "$2"  =~ ^[-+]=$ ]] ; do
 				#following regex comes from https://www.debian.org/doc/manuals/debmake-doc/ch05.en.html#name-version
@@ -159,7 +161,7 @@ for ((;$#;)) ; do
 			;;
 		-*) echo -e "Error: Unrecognized option $1\n$helpmsg" >&2 ; exit 2 ;;
 		up) kt_actionslist+=" update upgrade" ;;
-		switch) kt_actionslist+=" auth update saveconf clean upgrade checknfix clean" ;;
+		switch) kt_actionslist+=" getconf update saveconf clean upgrade checknfix clean" ;;
 		*) [[ "${kt_actions[$1]}" ]] && kt_actionslist+=" $1" || { echo -e "Error: Unrecognized action $1\n$helpmsg" >&2 ; exit 2 ; } ;;
 	esac
 	shift
