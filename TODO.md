@@ -1,5 +1,5 @@
 
-# TODO (there is also some "TODO" inside sources):
+### TODO (there is also some "TODO" inside sources):
 
 * manage "^file://" URI schemes (cf. RFC8089) (for KT_SERVER_URI and inside extension directives in sources.list.d/kt-remote.list)
 * support a new "#~kt:getconf:apt-preferences:..." directive, to enable pinning configuration:
@@ -13,7 +13,7 @@
 * low maybe: support a new "#~kt:getconf:apt-conf:..." directive to change apt conf also for apt, apt-get or aptitude.
 
 
-# DONE:
+### DONE:
 
 * Remove --monitor options
 * stop putting stdout and stderr together when running an action

@@ -46,7 +46,7 @@ It may send notification using **kt-notify**. See NOTES below.
 
 # ACTIONS (need root permissions)
 
-**getconf**
+**getconf**, **auth**
 :  get a distribution configuration (extended apt sources.list)
 
 **check**

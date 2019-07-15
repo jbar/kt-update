@@ -90,7 +90,7 @@ General options:
 
 Actions (need root permissions, cf. sudo):
     getconf          get distribution configuration (extended apt sources.list)
-    auth             equivalent to getconf
+    auth             (equivalent to getconf, deprecated)
     check            check packages configuration and packages status
     checknfix        check packages conf and status, and try repair if NOK
     clean            autoremove obsolete packages and purge downloaded *.deb files
@@ -101,7 +101,7 @@ Actions (need root permissions, cf. sudo):
     up               put your distro up to date, equivalent to: update upgrade
     update           check for packages updates
     upgrade          install newest packages, resolving some changing dependencies
-    dist-upgrade     equivalent to upgrade
+    dist-upgrade     (equivalent to upgrade)
 
     +=, install PACKAGES...  install extra packages (if no conflict with distro configuration)
     -=, purge   PACKAGES...  purge packages (if possible by your distro configuration)
