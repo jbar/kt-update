@@ -197,7 +197,7 @@ trap _onexit EXIT
 
 mkdir -p "$REPORTDIR" || exit 1
 
-echo "KT-UPDATE RUN [$KT_VERSION][$IDENTIFIER][$KT_SERVER_URI]: $(date)" | tee "$TMPDIR/init.log" >&2
+echo -e "\nKT-UPDATE RUN [$KT_VERSION][$IDENTIFIER][$KT_SERVER_URI]: $(date)" | tee "$TMPDIR/init.log"
 
 # Check the tmpdir size and exit if the space is too small.
 checktmpsize() {
@@ -240,17 +240,15 @@ cp "$TMPDIR/init.log" "$REPORTDIR/init.log"
 for ACTION in $kt_actionslist ; do
 	actionf="${kt_actions[$ACTION]}"
 
-	echo "KT-UPDATE ACTION: $actionf ($(date +"%T"))" | tee -a "$TMPDIR/$ACTION.log" "$LOGFILE" >&2
-
 	eval filter="\$ACTION_FILTER_$ACTION"
 	UMASK_SAVE=$(umask)
 	umask $UMASK_APT
 	#set -x
-	$actionf 2>&1 | tee -a "$TMPDIR/$ACTION.log" "$LOGFILE" | ( eval "${filter:-cat}" )
+	{ echo "KT-UPDATE ACTION: $actionf ($(date +"%T"))" ; $actionf > >(tee "$TMPDIR/$ACTION.log"); } 2> >(tee "$TMPDIR/$ACTION.err.log") | tee -a "$LOGFILE" | ( eval "${filter:-cat}" )
 	pipestatus=(${PIPESTATUS[@]})
 	if ((pipestatus[1] == 141)) ; then
 		echo "Warning: ACTION_FILTER_$ACTION raised a SIGPIPE (does it read stdin ?). Ignoring it..." | tee >(logger -p user.notice -t "$PROGNAME" --id=$$ ) >&2
-		$actionf 2>&1 | tee -a "$TMPDIR/$ACTION.log" "$LOGFILE"
+		{ echo "KT-UPDATE ACTION: $actionf ($(date +"%T"))" ; $actionf > >(tee "$TMPDIR/$ACTION.log"); } 2> >(tee "$TMPDIR/$ACTION.err.log") | tee -a "$LOGFILE"
 		pipestatus=(${PIPESTATUS[@]})
 	fi
 	#set +x
@@ -259,6 +257,7 @@ for ACTION in $kt_actionslist ; do
 	eval onsuccess="\$ACTION_SUCCESS_$ACTION"
 	eval onfail="\$ACTION_FAIL_$ACTION"
 	FAIL_STATUS=${pipestatus[0]}
+	FAIL_LOG="$TMPDIR/$ACTION.err.log"
 	if ((pipestatus[0])) ; then
 		( eval "$onfail" )
 	else
