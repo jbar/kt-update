@@ -32,6 +32,7 @@ PROGNAME="kt-update"
 
 UMASK_APT="022"
 
+# if $PROGNAME is executed (as root) in a fresh partial chroot, mount required /proc /sys and /dev/pts to run.
 unset umounts
 if ! mount | grep -q "^proc\>" ; then
 	umounts="binfmt_misc /proc"
@@ -51,6 +52,7 @@ trap '{ [ "$umounts" ] && umount -vf $umounts ; }' EXIT
 unset kt_runandexit
 unset kt_actionslist
 declare -A kt_actions=(
+	[init]=kt_init
 	[getconf]=kt_getconf
 	[check]=kt_check
 	[fix]=kt_checknfix
@@ -187,20 +189,20 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-LOGFILE="/var/log/$PROGNAME/log"
+OUTLOGFILE="/var/log/$PROGNAME/actions-output.log"
+ERRLOGFILE="/var/log/$PROGNAME/actions-error.log"
 LOCKFILE="$LIBDIR/lockfile"
 REPORTDIR="$LIBDIR/reports"
 
 trap _onexit EXIT
 
-############################### check #########################################
+######################## init special action ##############################
 
-mkdir -p "$REPORTDIR" || exit 1
+kt_init() {
+	echo "KT-UPDATE RUN [$KT_VERSION][$IDENTIFIER][$KT_SERVER_URI]: $(date)"
+	mkdir -p "$REPORTDIR" || return $?
 
-echo -e "\nKT-UPDATE RUN [$KT_VERSION][$IDENTIFIER][$KT_SERVER_URI]: $(date)" | tee "$TMPDIR/init.log"
-
-# Check the tmpdir size and exit if the space is too small.
-checktmpsize() {
+	## Check the tmpdir size and exit if the space is too small.
 	# Minimum amount of diskspace needed in /tmp in kbytes
 	local MINTMPDIRSIZE=100
 	# Sector size
@@ -211,44 +213,34 @@ checktmpsize() {
 	# The number size above is got from 32768/512=2^6
 	if [ "$FSCOUNT" -lt 33554432 ] ; then
 		if [ "$((SSIZE * FSCOUNT / 1024))" -lt "$MINTMPDIRSIZE" ]; then
-			echo "Warning: Not enough free space in $TMPDIR." | tee -a "$TMPDIR/init.log" | logger -s -p user.notice -t "$PROGNAME" --id=$$
-			return 1
+			echo "$FUNCNAME: Warning: Not enough free space in $TMPDIR." >&2
 		fi
 	fi
-}
-checktmpsize
 
-################## try to take out a lock, terminate if unsuccessful ##########
-
-if [ -x /usr/bin/dotlockfile ] ; then
-	if ! dotlockfile -l -p -r 1 $LOCKFILE; then
-		# create log entry
-		echo "Error: cannot acquire $PROGNAME lock." | tee -a "$TMPDIR/init.log" | logger -p user.notice -t "$PROGNAME" --id=$$
-		exit 1
+	if [ -x /usr/bin/dotlockfile ] ; then
+		if ! dotlockfile -l -p -r 1 $LOCKFILE; then
+			echo "$FUNCNAME: Error: cannot acquire $PROGNAME lock." >&2
+			return 1
+		fi
+	else
+		echo "$FUNCNAME: Warning: dotlockfile not installed. Shit may happen..." >&2
 	fi
-else
-	echo "Warning: dotlockfile not installed. Shit may happen..." | tee -a "$TMPDIR/init.log" | logger -s -p user.notice -t "$PROGNAME" --id=$$
-fi
-
-cat "$TMPDIR/init.log" >> "$LOGFILE"
-
-# Backup init.log, to be used in futur diff
-cp "$TMPDIR/init.log" "$REPORTDIR/init.log"
+}
 
 ############################### script ########################################
 
-for ACTION in $kt_actionslist ; do
+for ACTION in init $kt_actionslist ; do
 	actionf="${kt_actions[$ACTION]}"
 
 	eval filter="\$ACTION_FILTER_$ACTION"
 	UMASK_SAVE=$(umask)
 	umask $UMASK_APT
 	#set -x
-	{ echo "KT-UPDATE ACTION: $actionf ($(date +"%T"))" ; $actionf > >(tee "$TMPDIR/$ACTION.log"); } 2> >(tee "$TMPDIR/$ACTION.err.log") | tee -a "$LOGFILE" | ( eval "${filter:-cat}" )
+	{ echo -e "\nKT-UPDATE ACTION: $actionf ($(date +"%T"))" ; $actionf > >(tee -a "$TMPDIR/$ACTION.log"); } 2> >(tee -a "$TMPDIR/$ACTION.err.log" "$ERRLOGFILE" >&2 ) | tee -a "$OUTLOGFILE" | ( eval "${filter:-cat}" )
 	pipestatus=(${PIPESTATUS[@]})
 	if ((pipestatus[1] == 141)) ; then
-		echo "Warning: ACTION_FILTER_$ACTION raised a SIGPIPE (does it read stdin ?). Ignoring it..." | tee >(logger -p user.notice -t "$PROGNAME" --id=$$ ) >&2
-		{ echo "KT-UPDATE ACTION: $actionf ($(date +"%T"))" ; $actionf > >(tee "$TMPDIR/$ACTION.log"); } 2> >(tee "$TMPDIR/$ACTION.err.log") | tee -a "$LOGFILE"
+		echo "Warning: ACTION_FILTER_$ACTION raised a SIGPIPE (does it read stdin ?). Retrying ACTION without filter..." | logger -s -p user.notice -t "$PROGNAME" --id=$$
+		{ echo -e "\nKT-UPDATE ACTION: $actionf ($(date +"%T"))" ; $actionf > >(tee -a "$TMPDIR/$ACTION.log"); } 2> >(tee -a "$TMPDIR/$ACTION.err.log" "$ERRLOGFILE" >&2 ) | tee -a "$OUTLOGFILE"
 		pipestatus=(${PIPESTATUS[@]})
 	fi
 	#set +x
@@ -259,8 +251,10 @@ for ACTION in $kt_actionslist ; do
 	FAIL_STATUS=${pipestatus[0]}
 	FAIL_LOG="$TMPDIR/$ACTION.err.log"
 	if ((pipestatus[0])) ; then
+		echo "KT-UPDATE ACTION FAIL(${pipestatus[0]}): $actionf ($(date +"%T"))" | tee -a "$OUTLOGFILE" "$TMPDIR/$ACTION.log"
 		( eval "$onfail" )
 	else
+		echo "KT-UPDATE ACTION OK: $actionf ($(date +"%T"))" | tee -a "$OUTLOGFILE" "$TMPDIR/$ACTION.log"
 		( eval "$onsuccess" )
 	fi
 
