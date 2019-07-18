@@ -69,7 +69,7 @@ EXTRAKEYS=$( for key in "${!kt_actions[@]}" ; do echo -n "ACTION_FILTER_$key ACT
 
 # Config files may change previous default values and have to declare a IDENTIFIER (serial) parameter.
 # Note: POSIX Shell sort '*' by names, cf: http://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_13_03
-for f in /etc/kt-update/conf.d/*.conf ; do
+for f in "$PREFIX"/etc/kt-update/conf.d/*.conf ; do
 	kt_conf -r "$f" $EXTRAKEYS
 done
 
@@ -78,7 +78,8 @@ EXTRAKEYS=$( for key in $EXTRAKEYS ; do eval [ \"\$$key\" ] && echo -n "$key " ;
 
 # Declare actions which are not conf keys dependant
 kt_actions[printconf]="kt_conf -p $EXTRAKEYS"
-kt_actions[saveconf]="kt_conf -w /etc/kt-update/conf.d/90user.conf"
+#eval kt_actions[saveconf]="kt_conf -w \"$PREFIX\"/etc/kt-update/conf.d/90user.conf"
+kt_actions[saveconf]='eval kt_conf -w "$PREFIX"/etc/kt-update/conf.d/90user.conf'
 
 helpmsg="Usage: $0 [OPTIONS...]  [ACTIONS [OPTIONS...] ...] [+= PACKAGES...] [-= PACKAGES...]
 
@@ -135,7 +136,7 @@ for ((;$#;)) ; do
 			;;
 		-s|--simulate) APT_OPTIONS+=" -o APT::Get::Simulate=true";;
 		-d|--download-only) APT_OPTIONS+=" -o APT::Get::Download-Only=true";;
-		-a|--ask) kt_actions[saveconf]="kt_conf -i /etc/kt-update/conf.d/90user.conf" ;;
+		-a|--ask) kt_actions[saveconf]='eval kt_conf -i "$PREFIX/etc/kt-update/conf.d/90user.conf"' ;;
 		-B|--big) kt_actions[clean]="kt_clean -B" ;;
 		-p|--printconf) kt_runandexit="kt_conf -p $EXTRAKEYS" ;;
 		-l|--listids) kt_runandexit=kt_listids ;;
@@ -177,29 +178,34 @@ done
 _onexit() {
 	[ "$umounts" ] && umount -vf $umounts
 	[ -d "$TMPDIR" ] && rm -rf "$TMPDIR"
-	[ -x "/usr/bin/dotlockfile" ] && dotlockfile -u $LOCKFILE
+	[ -x "/usr/bin/dotlockfile" ] && dotlockfile -u "$LOCKFILE"
 }
 
 ######################## defaults dirs and files ##############################
 
-LIBDIR="/var/lib/$PROGNAME"
 TMPDIR=$(mktemp -d -t "$PROGNAME".XXXXXX)
 if [ $? -ne 0 ]; then
 	echo "Error: Can not create a safe temporary directory." | logger -s -p user.notice -t "$PROGNAME" --id=$$ 
 	exit 1
 fi
 
-OUTLOGFILE="/var/log/$PROGNAME/actions-output.log"
-ERRLOGFILE="/var/log/$PROGNAME/actions-error.log"
-LOCKFILE="$LIBDIR/lockfile"
-REPORTDIR="$LIBDIR/reports"
-
 trap _onexit EXIT
+
+LOGDIR="$PREFIX/var/log/$PROGNAME"
+OUTLOGFILE="$LOGDIR/actions-output.log"
+ERRLOGFILE="$LOGDIR/actions-error.log"
+mkdir -p "$LOGDIR" 2>&1 | logger -s -p user.notice -t "$PROGNAME" --id=$$
+((PIPESTATUS[0])) && exit 1
+
+LIBDIR="$PREFIX/var/lib/$PROGNAME"
+REPORTDIR="$LIBDIR/reports"
+LOCKFILE="$LIBDIR/lockfile"
 
 ######################## init special action ##############################
 
 kt_init() {
-	echo "KT-UPDATE RUN [$KT_VERSION][$IDENTIFIER][$KT_SERVER_URI]: $(date)"
+	echo "KT-UPDATE RUN [$KT_VERSION][$IDENTIFIER][$KT_SERVER_URI]"
+	date
 	mkdir -p "$REPORTDIR" || return $?
 
 	## Check the tmpdir size and exit if the space is too small.
@@ -218,7 +224,7 @@ kt_init() {
 	fi
 
 	if [ -x /usr/bin/dotlockfile ] ; then
-		if ! dotlockfile -l -p -r 1 $LOCKFILE; then
+		if ! dotlockfile -l -p -r 1 "$LOCKFILE"; then
 			echo "$FUNCNAME: Error: cannot acquire $PROGNAME lock." >&2
 			return 1
 		fi
@@ -236,11 +242,11 @@ for ACTION in init $kt_actionslist ; do
 	UMASK_SAVE=$(umask)
 	umask $UMASK_APT
 	#set -x
-	{ echo -e "\nKT-UPDATE ACTION: $actionf ($(date +"%T"))" ; $actionf > >(tee -a "$TMPDIR/$ACTION.log"); } 2> >(tee -a "$TMPDIR/$ACTION.err.log" "$ERRLOGFILE" >&2 ) | tee -a "$OUTLOGFILE" | ( eval "${filter:-cat}" )
+	{ { echo -e "\nKT-UPDATE ACTION: $actionf ($(date +"%T"))" ; $actionf ;} > >(tee -a "$TMPDIR/$ACTION.log"); } 2> >(tee -a "$TMPDIR/$ACTION.err.log" "$ERRLOGFILE" >&2 ) | tee -a "$OUTLOGFILE" | ( eval "${filter:-cat}" )
 	pipestatus=(${PIPESTATUS[@]})
 	if ((pipestatus[1] == 141)) ; then
 		echo "Warning: ACTION_FILTER_$ACTION raised a SIGPIPE (does it read stdin ?). Retrying ACTION without filter..." | logger -s -p user.notice -t "$PROGNAME" --id=$$
-		{ echo -e "\nKT-UPDATE ACTION: $actionf ($(date +"%T"))" ; $actionf > >(tee -a "$TMPDIR/$ACTION.log"); } 2> >(tee -a "$TMPDIR/$ACTION.err.log" "$ERRLOGFILE" >&2 ) | tee -a "$OUTLOGFILE"
+		{ { echo -e "\nKT-UPDATE ACTION: $actionf ($(date +"%T"))" ; $actionf ;} > >(tee -a "$TMPDIR/$ACTION.log"); } 2> >(tee -a "$TMPDIR/$ACTION.err.log" "$ERRLOGFILE" >&2 ) | tee -a "$OUTLOGFILE"
 		pipestatus=(${PIPESTATUS[@]})
 	fi
 	#set +x
@@ -251,10 +257,10 @@ for ACTION in init $kt_actionslist ; do
 	FAIL_STATUS=${pipestatus[0]}
 	FAIL_LOG="$TMPDIR/$ACTION.err.log"
 	if ((pipestatus[0])) ; then
-		echo "KT-UPDATE ACTION FAIL(${pipestatus[0]}): $actionf ($(date +"%T"))" | tee -a "$OUTLOGFILE" "$TMPDIR/$ACTION.log"
+		echo "KT-UPDATE ACTION FAIL(${pipestatus[0]}): $actionf" | tee -a "$OUTLOGFILE" "$TMPDIR/$ACTION.log"
 		( eval "$onfail" )
 	else
-		echo "KT-UPDATE ACTION OK: $actionf ($(date +"%T"))" | tee -a "$OUTLOGFILE" "$TMPDIR/$ACTION.log"
+		echo "KT-UPDATE ACTION OK: $actionf" | tee -a "$OUTLOGFILE" "$TMPDIR/$ACTION.log"
 		( eval "$onsuccess" )
 	fi
 

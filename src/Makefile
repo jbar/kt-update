@@ -29,7 +29,7 @@ install: kt-update kt-update.env
 	mkdir -p $(DESTDIR)$(SHAREDIR)
 
 uninstall:
-	rm $(DESTDIR)$(CRONDIR)/kt-update
+	#rm $(DESTDIR)$(CRONDIR)/kt-update
 	rm $(DESTDIR)$(BINDIR)/kt
 	rm $(DESTDIR)$(BINDIR)/kt-update
 	rm $(DESTDIR)$(BINDIR)/kt-update.env

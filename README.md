@@ -130,9 +130,15 @@ It may send notification using **kt-notify**. See NOTES below.
 */var/lib/kt-update/*
 :  kt-update's homedir
 
-*/var/log/kt-update\* *
+*/var/log/kt-update/\* *
 :  kt-update's logs
 
+# ENVIRONMENT VARIABLES
+
+cf. also usr/share/doc/kt-update/example.conf.
+
+**PREFIX**
+:  For testing purpose, used also on some special environment (Termux on Android)
 
 # DIAGNOSTICS
 
