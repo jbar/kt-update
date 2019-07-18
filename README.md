@@ -138,7 +138,7 @@ It may send notification using **kt-notify**. See NOTES below.
 cf. also usr/share/doc/kt-update/example.conf.
 
 **PREFIX**
-:  For testing purpose, used also on some special environment (Termux on Android)
+:  For testing purpose, used also on some special environments (Termux on Android)
 
 # DIAGNOSTICS
 

@@ -1,7 +1,6 @@
 
 ### TODO (there is also some "TODO" inside sources):
 
-* remove xsplashaa references in sources, add a conf key to possibly send message to plymouth (or xsplashaa).
 * manage "^file://" URI schemes (cf. RFC8089) (for KT_SERVER_URI and inside extension directives in sources.list.d/kt-remote.list)
 * support a new "#~kt:getconf:apt-preferences:..." directive, to enable pinning configuration:
     this directive should be unique if present because it is more simple and secure to manage only one file in /etc/apt/preferences.d/.
@@ -16,5 +15,6 @@
 
 ### DONE:
 
-* Remove --monitor options
+* remove xsplashaa references in sources, without introducing new conf key as we could use filter to possibly send (checknfix) messages to plymouth (or xsplashaa).
 * stop putting stdout and stderr together when running an action
+* Remove --monitor options
