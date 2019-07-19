@@ -288,3 +288,4 @@ for ACTION in init $kt_actionslist ; do
 	#exit on $actionf error
 	((pipestatus[0])) && exit ${pipestatus[0]}
 done
+exit 0
