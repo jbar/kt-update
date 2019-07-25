@@ -1,9 +1,14 @@
-kt-update (0.18.6) UNRELEASED; urgency=medium
+kt-update (0.18.9) experimental; urgency=medium
 
   * First debian packaging
   * clean some gaussian stuff
   * fix some lintian errors/warnings
   * rename action auth -> getconf
+  * Update AUTHORS file, according to Ola Lundqvist observations
+  * manage PREFIX environment (eg termux on Android)
+  * split stdout and stderr (into differents log files) 
+  * put the init inside a special action, to be able to filter or trigger init's fail, success or diff
+  * Fix bugs.
 
  -- Jean-Jacques Brucker <jean-jacquesbrucker@supersonicimagine.com>  Thu, 11 Jul 2019 17:37:28 +0200
 
