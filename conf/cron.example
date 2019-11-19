@@ -1,5 +1,5 @@
 #
 # Regular cron jobs for the kt-update package
 #
-# Every twenty minutes.
- */20 *	* * *	root	test -x /usr/bin/kt-update && DISPLAY=":0" /usr/bin/kt-update update
+# Every thirty minutes. DISPLAY env may be required by programs called aroud kt's ACTIONS.
+ */30 *	* * *	root	test -x /usr/bin/kt-update && DISPLAY=":0" /usr/bin/kt-update update

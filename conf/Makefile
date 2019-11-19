@@ -24,9 +24,10 @@ install: install-examples 01default.conf
 	mkdir -p $(DESTDIR)$(COMPLETIONDIR)
 	install -m644 bash_completion.d/kt-update $(DESTDIR)$(COMPLETIONDIR)/
 
-install-examples: example.conf
+install-examples: example.conf cron.example
 	mkdir -p $(DESTDIR)$(DOCDIR)
 	install -m644 example.conf $(DESTDIR)$(DOCDIR)/
+	install -m644 cron.example $(DESTDIR)$(DOCDIR)/
 
 uninstall:
 	rm -rv $(DESTDIR)$(ETCDIR)

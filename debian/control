@@ -10,9 +10,10 @@ Architecture: all
 Depends: apt, wget, ${misc:Depends}, bash ( >= 4.4 )
 Recommends: liblockfile1, cron | cron-daemon, kt-notify, apt-transport-https
 Suggests: xsplashaa
-Description: automatic update of packages using apt-get
- Contains a tool that is run by a cron job at regular intervals. By default it
- just updates the package list and downloads new packages without installing.
+Description: lightweight distribution management
+ Contain a tool than enhance cron-apt and manage an apt sources.list with some extensions.
+ Thus permit to switch between different distribution configurations.
+ It may also permit to switch beetween Debian and one of its light derivative.
  .
  Observe that this tool may be a security risk, so you should not set it
  to do more than necessary. Automatic upgrade of all packages is NOT
