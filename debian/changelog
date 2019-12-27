@@ -1,3 +1,10 @@
+kt-update (0.18.11) experimental; urgency=medium
+
+  * change to method to "comment" line in uids/index (begin with a space)
+  * add a timeout and improve error messages with kt_listids() 
+
+ -- Jean-Jacques Brucker <jean-jacquesbrucker@supersonicimagine.com>  Fri, 27 Dec 2019 16:16:14 +0100
+
 kt-update (0.18.10) experimental; urgency=medium
 
   * Clean debian/changelog, improve description, install cron.example.
