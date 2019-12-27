@@ -37,7 +37,7 @@ _ktupdate()
 		prev=${COMP_WORDS[COMP_CWORD-1]}
 		case $prev in
 			-I|--identifier)
-				COMPREPLY=( $( command kt-update --listids 2>/dev/null | awk ' /^'"$cur"'/ { print $1 ; }' ) )
+				COMPREPLY=( $( command kt-update --listids | awk ' /^'"$cur"'/ { print $1 ; }' ) )
 				return ;;
 			-m|--media)
 				COMPREPLY=( $( compgen -d -S "/" -- "$cur" ) )
