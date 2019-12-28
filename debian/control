@@ -12,8 +12,8 @@ Recommends: liblockfile1, cron | cron-daemon, kt-notify, apt-transport-https
 Suggests: xsplashaa
 Description: lightweight distribution management
  Contain a tool than enhance cron-apt and manage an apt sources.list with some extensions.
- Thus permit to switch between different distribution configurations.
- It may also permit to switch beetween Debian and one of its light derivative.
+ This allows to switch between different distribution configurations.
+ It may also allows to switch between Debian and one of its light derivative.
  .
  Observe that this tool may be a security risk, so you should not set it
  to do more than necessary. Automatic upgrade of all packages is NOT

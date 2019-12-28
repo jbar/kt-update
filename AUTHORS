@@ -14,7 +14,7 @@ Marc Haber <mh+debian-bugs@zugschlus.de>
 --- KT-UPDATE ---
 
 Jean-Jacques Brucker <jean-jacques.brucker@supersonicimagine.com>
- Completly rewrite cron-apt for gaussian purpose.
+ Completly rewrite cron-apt to upgrade and manage GauSSIan GNU/Linux configurations.
 
 Maxime Dementyev <maxime.dementyev@supersonicimagine.com>
  Implement kt-notify, a unreleased software used by kt-update to display notifications
