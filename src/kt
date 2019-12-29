@@ -19,8 +19,8 @@
 # MA 02110-1301 USA.
 #
 
-#source our bash library
-. "$(readlink -f "$0")-update.env"
+#source our bash library. Search first in ../lib, then in current dir.
+. "$(dirname "$0")"/../lib/kt-update.env || . "$(readlink -f "$0")-update.env"
 
 PROGNAME="kt-update"
 

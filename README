@@ -47,9 +47,9 @@ MINTMPDIRSIZE=100
    device where temporary files are created (mktemp) to allow kt-update
    to run. If set to 0 it will always continue even if empty.
 
-LOG="/var/log/kt-update/log"
+LOGDIR="/var/log/kt-update/"
 
-  The temporary logfile (for debugging). Use syslog for normal logging.
+  The logdir.
 
 
 UMASK_APT="022"

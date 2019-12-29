@@ -1,6 +1,6 @@
 % kt-update(8)
 % SuperSonic Imagine - Software Team
-% May 2019
+% December 2019
 
 # NAME
 
@@ -96,7 +96,6 @@ It may send notification using **kt-notify**. See NOTES below.
 **-n**, **--no-ktsource**
 :  remove apt source list given by **getconf** action
 
-
 ## Option for **upgrade**, **install**, **purge**, **checknfix**, and **clean** actions:
 
 **-s**, **--simulate**
@@ -112,7 +111,6 @@ It may send notification using **kt-notify**. See NOTES below.
 **-a**, **--ask**
 :  interactive mode to set and save main configurable values
 
-
 ## Option for clean (and switch) actions:
 
 **-B**, **--big**
@@ -125,7 +123,7 @@ It may send notification using **kt-notify**. See NOTES below.
 :  apt source lists managed by kt-update
 
 */etc/kt-update/conf.d/\*.conf*
-:  The configuration files. The variables you can set there should be documented in the configuration example
+:  The configuration files. The variables you can set there are also documented in the configuration example
 
 */var/lib/kt-update/*
 :  kt-update's homedir
@@ -133,12 +131,40 @@ It may send notification using **kt-notify**. See NOTES below.
 */var/log/kt-update/\* *
 :  kt-update's logs
 
+
 # ENVIRONMENT VARIABLES
 
-cf. also usr/share/doc/kt-update/example.conf.
+Except **PREFIX**, following environment variables are read from the configuration files, and should be overwritten by them
+
+cf. also the configuration example */usr/share/doc/kt-update/example.conf*
 
 **PREFIX**
 :  For testing purpose, used also on some special environments (Termux on Android)
+
+**KT_SERVER_URI**
+: kt-update configuration server to use
+
+**IDENTIFIER**
+: configuration identifier, to get specific apt sources.list with some kt-update's extensions
+
+**KT_GETCONF_PERIOD**
+: number of days to auto-run periodicaly a "getconf" action in the beginning of "update" action
+
+**WGET_OPTIONS**
+: options passed to Wget when kt-update uses it
+
+**APT_OPTIONS**
+: options passed to apt-get when kt-update uses it
+
+**DEBIAN_FRONTEND**
+: user interface for the package manager. As kt-update aims to ease system upgrade, default value is "noninteractive"
+
+**ACTION_DIFF_\***, **ACTION_FILTER_\***, **ACTION_FAIL_\***, **ACTION_SUCCESS_\* **
+: For each action in "**getconf check fix checknfix update download upgrade clean install purge**", you may specify a filter or what to do if action fail or success
+
+*Example:* **ACTION_DIFF_update**='my_sending_mail_script $PREVIOUS_ACTION_LOG $CURRENT_ACTION_LOG'\
+*Note:* The command you will specify have a read-only access to all kt-update's environment variables
+
 
 # DIAGNOSTICS
 
@@ -162,12 +188,12 @@ returns zero on normal operation, non-zero on errors.
 
 # SEE ALSO
 
-kt-notify, tasksel, cron-apt
+kt-notify, tasksel, cron-apt, wget, apt-get
 
 
 # NOTES
 
-Today, June 2019, kt-notify is still in its early stage of development and only support libnotify (with progress bar), but it should support modules to send notifications through dbus or email, etc.
+Today, December 2019, kt-notify is unreleased and only support libnotify (with progress bar), but it should support modules to send notifications through dbus or email, etc.
 
 For any suggestion please send email to: <jean-jacques.brucker@supersonicimagine.com>
 
