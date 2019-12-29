@@ -1,3 +1,11 @@
+kt-update (0.18.12) unstable; urgency=medium
+
+  * move bash library kt-update.env in $prefix/lib on install
+  * improve README, which is also the manual
+  * improve packaging: no more lintian warning
+
+ -- Jean-Jacques Brucker <jeanjacquesbrucker@gmail.com>  Sun, 29 Dec 2019 22:51:27 +0100
+
 kt-update (0.18.11+u1) unstable; urgency=medium
 
   * Improve package quality.

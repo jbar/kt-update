@@ -2,8 +2,8 @@ Source: kt-update
 Section: admin
 Priority: optional
 Maintainer: Jean-Jacques Brucker <jeanjacquesbrucker@gmail.com>
-Build-Depends: debhelper (>= 8.0.0), pandoc
-Standards-Version: 3.9.6
+Build-Depends: debhelper-compat (= 12), pandoc
+Standards-Version: 4.4.1
 
 Package: kt-update
 Architecture: all

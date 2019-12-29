@@ -1,4 +1,6 @@
  # NOTE: only lines beginning with non-space caracters are displayed using kt-update's --listids option
  # Then if you manage this index file manually, line beginning with space may be considered as comments.
+
  Identifier		Description
-buster-vanilla		debian buster with no special configuration
+buster-vanilla		Debian buster with no special configuration
+bullseye_sid-dev_min	Debian bullseye and sid with no special pin priority [git bash-completion]

@@ -1,0 +1,18 @@
+deb http://deb.debian.org/debian/ bullseye main non-free contrib
+deb-src http://deb.debian.org/debian/ bullseye main non-free contrib
+
+deb http://security.debian.org/debian-security bullseye-security main contrib non-free
+deb-src http://security.debian.org/debian-security bullseye-security main contrib non-free
+
+# unstable
+deb http://deb.debian.org/debian/ sid main non-free contrib
+deb-src http://deb.debian.org/debian/ sid main non-free contrib
+
+# experimental
+#deb http://deb.debian.org/debian/ experimental main contrib non-free
+
+
+# Extra directives for kt-update
+#~kt:check:package:::git
+#~kt:check:package:::bash-completion
+
