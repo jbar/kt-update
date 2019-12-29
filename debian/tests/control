@@ -1,0 +1,8 @@
+Test-Command: kt-update --version
+
+Test-Command: kt-update --help
+
+Test-Command: kt-update --printconf
+
+Test-Command: kt-update printconf
+Restrictions: needs-root

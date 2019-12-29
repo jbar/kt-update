@@ -10,4 +10,3 @@
 
 override_dh_auto_build:
 	make DEFAULTID=buster-vanilla
-

@@ -1,7 +1,13 @@
+kt-update (0.18.11+u1) unstable; urgency=medium
+
+  * Improve package quality.
+
+ -- Jean-Jacques Brucker <jeanjacquesbrucker@gmail.com>  Sun, 29 Dec 2019 16:58:35 +0100
+
 kt-update (0.18.11) experimental; urgency=medium
 
   * change to method to "comment" line in uids/index (begin with a space)
-  * add a timeout and improve error messages with kt_listids() 
+  * add a timeout and improve error messages with kt_listids()
 
  -- Jean-Jacques Brucker <jean-jacquesbrucker@supersonicimagine.com>  Fri, 27 Dec 2019 16:16:14 +0100
 
@@ -19,7 +25,7 @@ kt-update (0.18.9) experimental; urgency=medium
   * rename action auth -> getconf
   * Update AUTHORS file, according to Ola Lundqvist observations
   * manage PREFIX environment (eg termux on Android)
-  * split stdout and stderr (into differents log files) 
+  * split stdout and stderr (into differents log files)
   * put the init inside a special action, to be able to filter or trigger init's fail, success or diff
   * Fix bugs.
 
@@ -30,4 +36,3 @@ kt-update (0.10.1gaussian1) endive; urgency=medium
   * First packaging of kt-update, based on cron-apt.
 
  -- Jean-Jacques Brucker <jean-jacques.brucker@supersonicimagine.fr>  Tue, 31 Oct 2017 17:43:58 +0100
-
