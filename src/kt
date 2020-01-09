@@ -28,17 +28,17 @@ UMASK_APT="022"
 
 # if $PROGNAME is executed (as root) in a fresh partial chroot, mount required /proc /sys and /dev/pts to run.
 unset umounts
-if ! mount | grep -q "^proc\>" ; then
+if ! findmnt /proc >/dev/null ; then
 	umounts="binfmt_misc /proc"
-	mount -t proc proc /proc
+	mount -v -t proc proc /proc
 fi
-if ! mount | grep -q "^sysfs\>" ; then
+if ! findmnt /sys >/dev/null ; then
 	umounts="/sys $umounts"
-	mount -t sysfs sysfs /sys
+	mount -v -t sysfs sysfs /sys
 fi
-if ! mount | grep -q "^devpts\>" ; then
+if ! findmnt /dev/pts >/dev/null ; then
 	umounts="/dev/pts $umounts"
-	mount -t devpts devpts /dev/pts
+	mount -v -t devpts devpts /dev/pts
 fi
 
 trap '{ [ "$umounts" ] && umount -vf $umounts ; }' EXIT
