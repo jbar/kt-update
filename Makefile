@@ -12,6 +12,7 @@ clean:
 	for md in $(MAKEDIRS) ; do \
 		$(MAKE) -C $$md $@ ; \
 	done
+	make -C test clean
 
 install:
 	for md in $(MAKEDIRS) ; do \
