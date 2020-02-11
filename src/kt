@@ -150,7 +150,7 @@ for ((;$#;)) ; do
 		-=|purge)
 			while [ "$2" ] && ! [[ "$2"  =~ ^[-+]=$ ]] ; do
 				#following regex comes from https://www.debian.org/doc/manuals/debmake-doc/ch05.en.html#name-version
-				[[ "$2" =~ ^[-+.a-z0-9]{2,}$ ]] && kt_actions[purge]+=" $2" || echo "Warning: ignoring '$2' as it is NOT package name." >&2
+				[[ "$2" =~ ^[-+.a-z0-9]{2,}$ ]] && kt_actions[purge]+=" $2" || echo "Warning: ignoring '$2' as it is NOT a package name." >&2
 				shift
 			done
 			[[ " $kt_actionslist " =~ [[:space:]]update[[:space:]] ]] || kt_actionslist+=" update"
