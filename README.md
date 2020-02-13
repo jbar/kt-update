@@ -88,6 +88,20 @@ It may send notification using **kt-notify**. See NOTES below.
 
 # SPECIFIC OPTIONS
 
+##Options for **check** and **checknfix** actions
+
+**-fv**, **--force-version**
+:  Force error if monitored packages installed and candidate versions differ (as 'v' flag in 'kt:check' directive)
+
+**-fi**, **--force-integrity**
+:  Force error if files of monitored packages (except conf files) differs from expected (as 'i' flag in 'kt:check' directive)
+
+**-fI**, **--all-integrity**
+:  Force error if files of any installed packages (except conf files) differs from expected (as 'I' flag in 'kt:check' directive)
+
+**-df**, **--disable-flags**
+:  Ignore any flags in sources.list 'kt:check' directive
+
 ## Options for update (and install,purge) actions:
 
 **-m**, **--media** *PATH*

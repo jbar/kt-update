@@ -9,6 +9,8 @@ _ktupdate()
 
 	if [[ "$cur" == -* ]]; then
 		case ${COMP_WORDS[COMP_CWORD-1]} in
+			check|checknfix)
+				options='--force-version --force-integrity --all-integrity --disable-flags' ;;
 			update)
 				options='--media --no-ktsource' ;;
 			install|+=)

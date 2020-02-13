@@ -94,7 +94,7 @@ Actions (need root permissions, cf. sudo):
     download         only download needed packages (deprecated, use -d option)
     printconf        print all configurable values (same as -p option)
     saveconf         save given identifier (-I) or ktserver (-S) in configurable values
-    switch           equivalent to: getconf update saveconf clean upgrade checknfix clean
+    switch           equivalent to: getconf update saveconf clean upgrade checknfix --force-version --force-integrity clean
     up               put your distro up to date, equivalent to: update upgrade
     update           check for packages updates
     upgrade          install newest packages, resolving some changing dependencies
@@ -103,17 +103,22 @@ Actions (need root permissions, cf. sudo):
     +=, install PACKAGES...  install extra packages (if no conflict with distro configuration)
     -=, purge   PACKAGES...  purge packages (if possible by your distro configuration)
 
+Options for check and checknfix actions:
+    -fv, --force-version    force error if monitored packages installed and candidate versions differ (as 'v' flag in 'kt:check' directive)
+    -fi, --force-integrity  force error if files of monitored packages (except conf files) differs from expected (as 'i' flag in 'kt:check' directive)
+    -fI, --all-integrity    force error if files of any installed packages (except conf files) differs from expected (as 'I' flag in 'kt:check' directive)
+    -df, --disable-flags    ignore any flags in sources.list 'kt:check' directive
 Options for update (and install) actions:
-    -m, --media PATH     update from a PATH (mounted ISO) in addition to other sources
-    -n, --no-ktsource    remove apt source list given from kt-server
+    -m, --media PATH        update from a PATH (mounted ISO) in addition to other sources
+    -n, --no-ktsource       remove apt source list given from kt-server
 Option for upgrade, install, purge, checknfix, and clean actions:
-    -s, --simulate       No-act. Perform ordering simulation
+    -s, --simulate          No-act. Perform ordering simulation
 Option for upgrade and install actions:
-    -d, --download-only  Download only ; packages are only retrieved, not unpacked or installed.
+    -d, --download-only     Download only ; packages are only retrieved, not unpacked or installed.
 Option for saveconf action:
-    -a, --ask            interactive mode to set and save main configurable value
+    -a, --ask               interactive mode to set and save main configurable value
 Option for clean (and switch) actions:
-    -B, --big            remove also all packages not checked explicitly by your configuration
+    -B, --big               remove also all packages not checked explicitly by your configuration
 "
 
 ############################# arguments #######################################
@@ -134,6 +139,10 @@ for ((;$#;)) ; do
 		-B|--big) kt_actions[clean]="kt_clean -B" ;;
 		-p|--printconf) kt_runandexit="kt_conf -p $EXTRAKEYS" ;;
 		-l|--listids) kt_runandexit=kt_listids ;;
+		-fv|--force-version|-fi|--force-integrity|-fI|--all-integrity|-df|--disable-flags)
+			kt_actions[check]+=" $1"
+			kt_actions[checknfix]+=" $1"
+			;;
 		-h|--h*) kt_runandexit='eval echo "$helpmsg"' ;;
 		-V|--vers*) kt_runandexit="echo $PROGNAME $KT_VERSION" ;;
 		dist-upgrade) kt_actionslist+=" upgrade" ;;
@@ -158,7 +167,10 @@ for ((;$#;)) ; do
 			;;
 		-*) echo -e "Error: Unrecognized option $1\n$helpmsg" >&2 ; exit 2 ;;
 		up) kt_actionslist+=" update upgrade" ;;
-		switch) kt_actionslist+=" getconf update saveconf clean upgrade checknfix clean" ;;
+		switch)
+			kt_actions[checknfix]+=" --force-version --force-integrity"
+			kt_actionslist+=" getconf update saveconf clean upgrade checknfix clean"
+			;;
 		*) [[ "${kt_actions[$1]}" ]] && kt_actionslist+=" $1" || { echo -e "Error: Unrecognized action $1\n$helpmsg" >&2 ; exit 2 ; } ;;
 	esac
 	shift
