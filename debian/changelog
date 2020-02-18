@@ -1,3 +1,11 @@
+kt-update (1.0.0) experimental; urgency=medium
+
+  * New directive and new options for kt_check and kt_checknfix
+  * Some unit tests
+  * lot of minor fixes or improvements
+
+ -- Jean-Jacques Brucker <jeanjacquesbrucker@gmail.com>  Tue, 18 Feb 2020 13:19:30 +0100
+
 kt-update (0.18.12) unstable; urgency=medium
 
   * move bash library kt-update.env in $prefix/lib on install
