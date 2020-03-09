@@ -71,9 +71,9 @@ done
 EXTRAKEYS=$( for key in $EXTRAKEYS ; do eval [ \"\$$key\" ] && echo -n "$key " ; done )
 
 # Declare actions which are not conf keys dependant
-kt_actions[printconf]="kt_conf -p $EXTRAKEYS"
+kt_actions[printconf]="kt_conf --print $EXTRAKEYS"
 #eval kt_actions[saveconf]="kt_conf -w \"$PREFIX\"/etc/kt-update/conf.d/90user.conf"
-kt_actions[saveconf]='eval kt_conf -w "$PREFIX"/etc/kt-update/conf.d/90user.conf'
+kt_actions[saveconf]='eval kt_conf --write "$PREFIX"/etc/kt-update/conf.d/90user.conf'
 
 helpmsg="Usage: $0 [OPTIONS...]  [ACTIONS [OPTIONS...] ...] [+= PACKAGES...] [-= PACKAGES...]
 
