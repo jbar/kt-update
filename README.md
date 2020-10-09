@@ -68,10 +68,10 @@ It may send notification using **kt-notify**. See NOTES below.
 :  save given identifier (-I) or ktserver (-S) in configurable values
 
 **switch**
-:  equivalent to: **getconf** **update** **saveconf** **clean** **upgrade** **checknfix** **clean**
+:  equivalent to: **getconf update saveconf clean upgrade checknfix --force-version --force-integrity clean**
 
 **up**
-:  equivalent to: **update** **upgrade**
+:  equivalent to: **update upgrade**
 
 **update**
 :  check for packages updates
@@ -209,5 +209,5 @@ kt-notify, tasksel, cron-apt, wget, apt-get
 
 Today, December 2019, kt-notify is unreleased and only support libnotify (with progress bar), but it should support modules to send notifications through dbus or email, etc.
 
-For any suggestion please send email to: <jean-jacques.brucker@supersonicimagine.com>
+For any suggestion please send email to: <jean-jacques.brucker@hologic.com>
 
