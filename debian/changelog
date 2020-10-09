@@ -1,3 +1,10 @@
+kt-update (1.0.1) experimental; urgency=medium
+
+  * BugFix: kt-update checknfix don't "fix" missing package
+  * Update README.md (which is also the man page)
+
+ -- Jean-Jacques Brucker <jeanjacquesbrucker@gmail.com>  Fri, 09 Oct 2020 11:59:41 +0200
+
 kt-update (1.0.0) experimental; urgency=medium
 
   * New directive and new options for kt_check and kt_checknfix
