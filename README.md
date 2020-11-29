@@ -1,6 +1,6 @@
 % kt-update(8)
 % SuperSonic Imagine - Software Team
-% December 2019
+% February 2020
 
 # NAME
 
@@ -56,7 +56,7 @@ It may send notification using **kt-notify**. See NOTES below.
 :  check packages conf and status, and try repair if NOK
 
 **clean**
-:  autoremove obsolete packages and purge downloaded \*.deb files
+:  auto remove obsolete packages and purge downloaded \*.deb files
 
 **download**
 :  only download needed packages (deprecated, use -d option)
@@ -88,7 +88,7 @@ It may send notification using **kt-notify**. See NOTES below.
 
 # SPECIFIC OPTIONS
 
-##Options for **check** and **checknfix** actions
+## Options for **check** and **checknfix** actions
 
 **-fv**, **--force-version**
 :  Force error if monitored packages installed and candidate versions differ (as 'v' flag in 'kt:check' directive)
@@ -162,7 +162,7 @@ cf. also the configuration example */usr/share/doc/kt-update/example.conf*
 : configuration identifier, to get specific apt sources.list with some kt-update's extensions
 
 **KT_GETCONF_PERIOD**
-: number of days to auto-run periodicaly a "getconf" action in the beginning of "update" action
+: number of days to auto-run periodically a "getconf" action in the beginning of "update" action
 
 **WGET_OPTIONS**
 : options passed to Wget when kt-update uses it
@@ -207,7 +207,7 @@ kt-notify, tasksel, cron-apt, wget, apt-get
 
 # NOTES
 
-Today, December 2019, kt-notify is unreleased and only support libnotify (with progress bar), but it should support modules to send notifications through dbus or email, etc.
+kt-notify is yet unreleased and only parse kt-update, or apt-get, output to display notifications (with progress bar) through libnotify. It support modules to send, maybe in the futur, notifications through dbus or email, etc.
 
 For any suggestion please send email to: <jean-jacques.brucker@hologic.com>
 
