@@ -2,6 +2,7 @@
  # Then if you manage this index file manually, line beginning with space may be considered as comments.
 
  Identifier		Description
-buster-vanilla		Debian 10 with no special configuration
+stretch-backports	Debian stretch (9) with debian's backported packages
+buster-vanilla		Debian buster (10) with no special configuration
+bullseye-vanilla	Debian bullseye (11) with no special configuration
 bullseye_sid-dev_min	Debian bullseye(11) and sid with no special pin priority [git bash-completion]
-stretch-backports	Debian 9 with debian's backported packages
