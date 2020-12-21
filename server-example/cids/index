@@ -4,5 +4,6 @@
  Identifier		Description
 stretch-backports	Debian stretch (9) with debian's backported packages
 buster-vanilla		Debian buster (10) with no special configuration
-bullseye-vanilla	Debian bullseye (11) with no special configuration
+buster-desktop		Debian buster (10) basic desktop configuration [task-desktop bash-completion]
+bullseye-desktop	Debian bullseye (11) basic desktop configuration [task-desktop bash-completion]
 bullseye_sid-dev_min	Debian bullseye(11) and sid with no special pin priority [git bash-completion]
