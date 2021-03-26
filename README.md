@@ -1,6 +1,10 @@
-% kt-update(8)
-% SuperSonic Imagine - Software Team
-% February 2020
+---
+title: KT-UPDATE
+section: 8
+header: User Manual
+footer: kt-update
+date: November 2020
+---
 
 # NAME
 
@@ -205,9 +209,11 @@ returns zero on normal operation, non-zero on errors.
 kt-notify, tasksel, cron-apt, wget, apt-get
 
 
+# AUTHOR
+
+Jean-Jacques Brucker <jean-jacques.brucker@hologic.com>
+
 # NOTES
 
-kt-notify is yet unreleased and only parse kt-update, or apt-get, output to display notifications (with progress bar) through libnotify. It support modules to send, maybe in the futur, notifications through dbus or email, etc.
-
-For any suggestion please send email to: <jean-jacques.brucker@hologic.com>
+SuperSonic Imagine did also develop but unreleased kt-notify, which parse kt-update, or apt-get and display notifications (with progress bar) through libnotify. It support modules to send, maybe in the futur, notifications through dbus or email, etc.
 
