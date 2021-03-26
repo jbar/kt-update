@@ -7,7 +7,6 @@
     we may call the managed file kt-update
 * Add new option to select keyring (default: /usr/share/keyrings/debian-maintainers.gpg) to verify the source file, then retrieve a "sources.list.sig" which contain detached siganture, and only accept signed and verified files configuration. (security issue)
 * Support new "#~kt:getconf:conf:sha1:\<hash\>:..\<uri\>" directives to manage a file /etc/kt-update/conf.d/50ktserver.conf. (changing APT_OPTIONS by server is the first need)
-* low priority: use a default sheme if no sheme is recognized (it may me boring to always type "http://")
 * low priority: support installing .deb like apt does (checking and installing also dependencies)
 * low maybe: support a new "#~kt:getconf:apt-conf:..." directive to change apt conf also for apt, apt-get or aptitude.
 * manage merging different source list into /etc/apt/sources.list.d/kt-remote.list:
@@ -18,6 +17,7 @@
 
 ### DONE:
 
+* use a default sheme (https://) if no URI sheme is recognized inside KT_SERVER_URI
 * remove xsplashaa references in sources, without introducing new conf key as we could use filter to possibly send (checknfix) messages to plymouth (or xsplashaa).
 * stop putting stdout and stderr together when running an action
 * Remove --monitor options
