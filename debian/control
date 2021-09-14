@@ -8,7 +8,7 @@ Standards-Version: 4.4.1
 Package: kt-update
 Architecture: all
 Depends: apt, wget, ${misc:Depends}, bash ( >= 4.4 )
-Recommends: liblockfile-bin, cron | cron-daemon, kt-notify, apt-transport-https, debsums
+Recommends: liblockfile-bin, cron | cron-daemon, apt-transport-https, debsums
 Suggests: default-mta | mail-transport-agent
 Description: lightweight distribution management
  Manage an apt sources.list with some extensions, which can be remotly defined,

@@ -25,8 +25,6 @@ kt-update - lightweight distribution management.
 
 It is configurable through files \*.conf in /etc/kt-update/conf.d/. Though, the 2 main parameters KT\_SERVER\_URI and IDENTIFIER are configurable through the **saveconf** action (cf. /etc/kt-update/conf.d/90user.conf).
 
-It may send notification using **kt-notify**. See NOTES below.
-
 # GENERAL OPTIONS
 
 **-S** *URI*, **--ktserver** *URI*
@@ -206,7 +204,7 @@ returns zero on normal operation, non-zero on errors.
 
 # SEE ALSO
 
-kt-notify, tasksel, cron-apt, wget, apt-get
+tasksel, cron-apt, wget, apt-get
 
 
 # AUTHOR
