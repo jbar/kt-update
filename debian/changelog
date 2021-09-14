@@ -1,3 +1,11 @@
+kt-update (1.0.3) experimental; urgency=medium
+
+  * SSI-26984: kt-update checknfix don't fix missing package
+  * use a default sheme (https://) if no URI sheme is recognized inside KT_SERVER_URI
+  * update manpage
+
+ -- Jean-Jacques Brucker <jeanjacquesbrucker@gmail.com>  Tue, 14 Sep 2021 15:55:31 +0200
+
 kt-update (1.0.1) experimental; urgency=medium
 
   * BugFix: kt-update checknfix don't "fix" missing package
